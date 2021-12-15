@@ -2,8 +2,8 @@ const {Category}= require("../model/category");
 
 
 module.exports ={
-    getCategoryById:async function (userId){
-        return await Category.findById(userId);
+    getCategoryById:async function (categoryId){
+        return await Category.findById(categoryId);
         },
     getCategoryByPredicate:async function (obj){
         return await Category.findOne(obj);

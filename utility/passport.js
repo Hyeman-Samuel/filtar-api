@@ -1,5 +1,5 @@
 const passport = require('passport');
-
+const {User} = require("../model/user");
 module.exports=function (app){
 app.use(passport.initialize())
 let JwtStrategy = require('passport-jwt').Strategy,

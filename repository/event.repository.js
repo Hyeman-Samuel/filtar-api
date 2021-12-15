@@ -2,8 +2,8 @@ const {Event}= require("../model/event");
 
 
 module.exports ={
-    getEventById:async function (userId){
-        return await Event.findById(userId);
+    getEventById:async function (eventId){
+        return await Event.findById(eventId);
         },
     getEventByPredicate:async function (obj){
         return await Event.findOne(obj);
