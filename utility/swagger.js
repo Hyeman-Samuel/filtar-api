@@ -5,12 +5,28 @@
 // const endpointsFiles = ["./routes/category.route.js"];
 // const config = {}
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('../swagger-output.json');
+const swaggerJsdoc = require('swagger-jsdoc');
 
-//
+const swaggerOptions = {
+  definition:{
+    openapi: "3.0.3",
+    info:{
+        title:"Filtar Api",
+        version: "1.0.0",
+        description:"Backend Infrasctructure",
+        contact:{
+          name:"Hyeman Samuel"
+        },
+        servers:["http://localhost:5000"]
+    }
+  },
+  apis:['./routes/*.js']
+
+}
 
 
 
   module.exports= function (app){
+    const swaggerDocument = swaggerJsdoc(swaggerOptions)
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));   
   }

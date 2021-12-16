@@ -22,7 +22,7 @@ const flutterwave = (req) => {
                 "logo":"https://assets.piedpiper.com/logo.png"
             }
         }
-        
+
         const option = {
             url : 'https://api.flutterwave.com/v3/payments',
             headers : {
@@ -38,20 +38,8 @@ const flutterwave = (req) => {
         request.post(option,callback);
     }
 
-    const verifyPayment = (ref,mycallback) => {
-        const option = {
-            url : 'https://api.paystack.co/transaction/verify/' + encodeURIComponent(ref),
-            headers : {
-                Authorization:"Bearer "+ MySecretKey,
-                'content-type': 'application/json',
-                'cache-control': 'no-cache'
-        }
-        }
-        const callback = (error, response, body)=>{
-            return mycallback(error, body);
-        }
-        request(option,callback);
+    const paymentWebhook = (ref,mycallback) => {
     }
-    return {initializePayment, verifyPayment};
+    return {initializePayment, paymentWebhook};
 }
-module.exports = paystack()
+module.exports = flutterwave()

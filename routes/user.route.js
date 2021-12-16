@@ -4,6 +4,62 @@ const {response,RESPONSETYPE} = require("../utility/response")
 const {check, validationResult } = require('express-validator');
 const {createUser,authJwt,validatePassword,getUserByPredicate}= require("../repository/user.repository");
 
+/**
+ * @openapi
+ *components:
+ *    schemas:
+ *      SignUp:
+ *        type: object
+ *        required:
+ *          - email
+ *          - password
+ *          - confirm-password
+*        properties:
+*           email:
+*            type: string
+*            description: email of the user.
+*           password:
+*            type: string
+*            description: password of the user.
+*           confirm-password:
+*            type: string
+*            description: password of the user.
+ */
+
+/**
+ * @openapi
+ *components:
+ *    schemas:
+ *      LogIn:
+ *        type: object
+ *        required:
+ *          - email
+ *          - password
+*        properties:
+*           email:
+*            type: string
+*            description: email of the user.
+*           password:
+*            type: string
+*            description: password of the user.
+ */
+
+
+/**
+ * @openapi
+ * /auth/login:
+ *   post:
+ *     description: logs user in 
+ *     responses:
+ *       200:
+ *         description: Returns a Jwt token.
+ *     requestBody:
+ *      required: true
+ *      content:
+ *         application/json:
+ *              schema:    
+ *                  $ref: '#/components/schemas/LogIn'
+ */
 Router.post("/login",validateLogin(),async(req,res)=>{ 
     var errors = validationResult(req).array()
 
@@ -18,6 +74,24 @@ Router.post("/login",validateLogin(),async(req,res)=>{
     response(res,RESPONSETYPE.UNAUTHORIZED,"Incorrect login details");  
    }
 })
+
+
+
+/**
+ * @openapi
+ * /auth/signup:
+ *   post:
+ *     description: sign in user in 
+ *     responses:
+ *       200:
+ *         description: Returns a Jwt token.
+ *     requestBody:
+ *      required: true
+ *      content:
+ *         application/json:
+ *              schema:    
+ *                  $ref: '#/components/schemas/SignUp'
+ */
 
 Router.post("/signup",validateSignUp(),async(req,res)=>{ 
     var errors = validationResult(req).array()
