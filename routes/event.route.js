@@ -40,9 +40,9 @@ const {getEventsByPredicate,
  * /v1/event:
  *   get:
  *     description: all events 
- *     responses:
  *     tags:
  *        [Event]
+ *     responses:
  *       200:
  *         description: Returns all events.
  */
@@ -57,9 +57,9 @@ Router.get("/",async(req,res)=>{
  * /v1/event/{id}:
  *   get:
  *     description: gets a single event
- *     responses:
  *     tags:
  *        [Event]
+ *     responses:
  *       200:
  *         description: Returns an event.
  *     parameters:
@@ -84,10 +84,10 @@ Router.get("/:id",async(req,res)=>{
  * @openapi
  * /v1/event:
  *   post:
- *     description: create an event 
- *     responses:
+ *     description: create an event
  *     tags:
  *        [Event]
+ *     responses:
  *       200:
  *         description: Returns a the new event.
  *     requestBody:
@@ -97,7 +97,6 @@ Router.get("/:id",async(req,res)=>{
  *              schema:    
  *                  $ref: '#/components/schemas/Event'
  */
-
 Router.post("/", 
 auth_middleware(),
 role([Role.ADMIN]),
