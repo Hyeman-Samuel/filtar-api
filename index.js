@@ -2,7 +2,8 @@ const Express= require('express');
 const mongoDB = require("./utility/mongoDb");
 const bodyParser = require("./utility/bodyParser");
 const swagger = require("./utility/swagger");
-const {Logger} = require("./utility/logger")
+const {Logger} = require("./utility/logger");
+const {response,RESPONSETYPE} = require("./utility/response")
 const errorMiddleware = require("./middleware/exception_middleware")
 require('express-async-errors');
 require('dotenv').config()
@@ -43,11 +44,14 @@ app.use("/v1/category",category);
 app.use("/v1/auth",user);
 app.use("/v1/",welcome);
 
-app.get("/errorlogs",async (req,res,)=>{
+app.get("/v1/errorlogs",async (req,res,)=>{
     res.sendFile(`${__dirname}/error.log`)
   })
 
-//app.get('*', function(req, res) {});
+app.get('*', function(req, res) {
+  response(res,RESPONSETYPE.NOTFOUND,"Path Not Found");
+});
+
 app.use(errorMiddleware)
 
 app.listen(app.get('port'), function() {
