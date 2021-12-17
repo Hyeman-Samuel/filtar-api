@@ -2,6 +2,16 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
+const ORDERSTAGES={
+    PAYMENT_REQUIRED:0,
+    PENDING:1,
+    UPLOADED:2,
+    DELIVERED:3,
+    CANCELLED:4  
+}
+Object.freeze(ORDERSTAGES)
+
+
 const OrdersSchema = new Schema({
 orderNumber: {type:String,required:true},
 price:{type:Number,required:true},
@@ -16,14 +26,7 @@ arFilterLink:{type:[String]}
 
 
 
-const ORDERSTAGES={
-    PAYMENT_REQUIRED:0,
-    PENDING:1,
-    UPLOADED:2,
-    DELIVERED:3,
-    CANCELLED:4  
-}
-Object.freeze(ORDERSTAGES)
+
 
 
 const Order = mongoose.model('Orders', OrdersSchema);

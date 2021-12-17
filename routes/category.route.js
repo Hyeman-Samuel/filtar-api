@@ -1,6 +1,6 @@
 const express = require('express');
 const Router = express.Router();
-const passport = require('passport');
+const auth_middleware = require("../middleware/auth_middleware");
 const {response,RESPONSETYPE} = require("../utility/response")
 const {check, validationResult } = require('express-validator');
 const role=require("../middleware/role_middleware");
@@ -11,10 +11,50 @@ const {getCategoriesByPredicate,
     deleteCategory,
     updateCategory} = require("../repository/category.repository")
 
+    /**
+ * @openapi
+ *components:
+ *    schemas:
+ *      Category:
+ *        type: object
+ *        required:
+ *          - categoryName
+ *        properties:
+ *           categoryName:
+ *            type: string
+ *            description: name of the category.
+ */
+
+
+    /**
+ * @openapi
+ * /v1/category:
+ *   get:
+ *     description: all categories 
+ *     responses:
+ *       200:
+ *         description: Returns all category token.
+ */
 Router.get("/",async(req,res)=>{ 
     response(res,RESPONSETYPE.OK,await getCategoriesByPredicate());
 })
 
+/**
+ * @openapi
+ * /v1/category/{id}:
+ *   get:
+ *     description: gets a single category
+ *     responses:
+ *       200:
+ *         description: Returns a catgeory.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *            type: integer
+ *         required: true
+ *         description: category id
+ */
 Router.get("/:id",async(req,res)=>{ 
     const category = await getCategoryById(req.params.id);
     if(!category)response(res,RESPONSETYPE.NOTFOUND,"Category not found.");
@@ -22,13 +62,45 @@ Router.get("/:id",async(req,res)=>{
     response(res,RESPONSETYPE.OK,);
 })
 
+/**
+ * @openapi
+ * /v1/category/{id}/events:
+ *   get:
+ *     description: gets all events in a single category
+ *     responses:
+ *       200:
+ *         description: Returns events.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *            type: integer
+ *         required: true
+ *         description: category id
+ */
 Router.get("/:id/events",async(req,res)=>{ 
     response(res,RESPONSETYPE.OK,"reached");
 })
 
-
+/**
+ * @openapi
+ * /v1/category:
+ *   post:
+ *     description: create a category 
+ *     security:
+ *     bearerAuth: [] 
+ *     responses:
+ *       200:
+ *         description: Returns a the new category.
+ *     requestBody:
+ *      required: true
+ *      content:
+ *         application/json:
+ *              schema:    
+ *                  $ref: '#/components/schemas/Category'
+ */
 Router.post("/", 
-passport.authenticate('jwt', { session: false }),
+auth_middleware(),
 role([Role.ADMIN]),
 validateCategory(),async(req,res)=>{ 
     var errors = validationResult(req).array()
@@ -41,8 +113,32 @@ validateCategory(),async(req,res)=>{
 })
 
 
-Router.put("/", 
-passport.authenticate('jwt', { session: false }),
+/**
+ * @openapi
+ * /v1/category/{id}:
+ *   put:
+ *     description: edit a category 
+ *     security:
+ *        bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Returns a the new category.
+ *     requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *              schema:    
+ *                  $ref: '#/components/schemas/Category'
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *            type: integer
+ *         required: true
+ *         description: category id
+ */
+Router.put("/:id", 
+auth_middleware(),
 role([Role.ADMIN]),
 validateCategory(),async(req,res)=>{ 
     var errors = validationResult(req).array()
@@ -55,8 +151,25 @@ validateCategory(),async(req,res)=>{
     response(res,RESPONSETYPE.OK,await updateCategory(req.params.id,category));
 })
 
+
+/**
+ * @openapi
+ * /v1/category/{id}:
+ *   delete:
+ *     description: deletes category
+ *     responses:
+ *       200:
+ *         description: ok message.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *            type: integer
+ *         required: true
+ *         description: category id
+ */
 Router.delete("/:id", 
-passport.authenticate('jwt', { session: false }),
+auth_middleware(),
 role([Role.ADMIN])
 ,async(req,res)=>{ 
     response(res,RESPONSETYPE.OK,await deleteCategory(req.params.id));

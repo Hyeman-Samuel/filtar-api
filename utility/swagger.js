@@ -18,10 +18,18 @@ const swaggerOptions = {
           name:"Hyeman Samuel"
         },
         servers:["http://localhost:5000"]
+    },
+    components:{
+      securitySchemes:{
+        bearerAuth:{
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT"
+        }
+      }
     }
   },
-  apis:['./routes/*.js']
-
+  apis:['./routes/*.js'],
 }
 
 

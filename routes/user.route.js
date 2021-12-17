@@ -47,7 +47,7 @@ const {createUser,authJwt,validatePassword,getUserByPredicate}= require("../repo
 
 /**
  * @openapi
- * /auth/login:
+ * /v1/auth/login:
  *   post:
  *     description: logs user in 
  *     responses:
@@ -79,7 +79,7 @@ Router.post("/login",validateLogin(),async(req,res)=>{
 
 /**
  * @openapi
- * /auth/signup:
+ * /v1/auth/signup:
  *   post:
  *     description: sign in user in 
  *     responses:
