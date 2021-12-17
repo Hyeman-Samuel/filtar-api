@@ -50,6 +50,8 @@ const {createUser,authJwt,validatePassword,getUserByPredicate}= require("../repo
  * /v1/auth/login:
  *   post:
  *     description: logs user in 
+ *     tags:
+ *        [Auth]
  *     responses:
  *       200:
  *         description: Returns a Jwt token.
@@ -82,6 +84,8 @@ Router.post("/login",validateLogin(),async(req,res)=>{
  * /v1/auth/signup:
  *   post:
  *     description: sign in user in 
+ *     tags:
+ *        [Auth]
  *     responses:
  *       200:
  *         description: Returns a Jwt token.

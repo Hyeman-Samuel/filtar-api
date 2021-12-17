@@ -41,6 +41,8 @@ const {getEventsByPredicate,
  *   get:
  *     description: all events 
  *     responses:
+ *     tags:
+ *        [Event]
  *       200:
  *         description: Returns all events.
  */
@@ -56,6 +58,8 @@ Router.get("/",async(req,res)=>{
  *   get:
  *     description: gets a single event
  *     responses:
+ *     tags:
+ *        [Event]
  *       200:
  *         description: Returns an event.
  *     parameters:
@@ -82,6 +86,8 @@ Router.get("/:id",async(req,res)=>{
  *   post:
  *     description: create an event 
  *     responses:
+ *     tags:
+ *        [Event]
  *       200:
  *         description: Returns a the new event.
  *     requestBody:
@@ -119,6 +125,8 @@ validateEvent(),async(req,res)=>{
  * /v1/event/{id}:
  *   put:
  *     description: edits a single event
+ *     tags:
+ *        [Event]
  *     responses:
  *       200:
  *         description: Returns an event.
@@ -158,6 +166,8 @@ validateEvent(),async(req,res)=>{
  * /v1/event/{id}:
  *   delete:
  *     description: deletes event
+ *     tags:
+ *        [Event]
  *     responses:
  *       200:
  *         description: ok message.

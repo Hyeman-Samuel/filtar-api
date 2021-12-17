@@ -10,7 +10,7 @@ const {getCategoriesByPredicate,
     createCategory,
     deleteCategory,
     updateCategory} = require("../repository/category.repository")
-
+const {getEventsByPredicate}= require("../repository/event.repository")
     /**
  * @openapi
  *components:
@@ -31,6 +31,8 @@ const {getCategoriesByPredicate,
  * /v1/category:
  *   get:
  *     description: all categories 
+ *     tags:
+ *        [Category]
  *     responses:
  *       200:
  *         description: Returns all category token.
@@ -44,6 +46,8 @@ Router.get("/",async(req,res)=>{
  * /v1/category/{id}:
  *   get:
  *     description: gets a single category
+ *     tags:
+ *        [Category]
  *     responses:
  *       200:
  *         description: Returns a catgeory.
@@ -59,7 +63,7 @@ Router.get("/:id",async(req,res)=>{
     const category = await getCategoryById(req.params.id);
     if(!category)response(res,RESPONSETYPE.NOTFOUND,"Category not found.");
 
-    response(res,RESPONSETYPE.OK,);
+    response(res,RESPONSETYPE.OK,category);
 })
 
 /**
@@ -67,6 +71,8 @@ Router.get("/:id",async(req,res)=>{
  * /v1/category/{id}/events:
  *   get:
  *     description: gets all events in a single category
+ *     tags:
+ *        [Category]
  *     responses:
  *       200:
  *         description: Returns events.
@@ -79,7 +85,7 @@ Router.get("/:id",async(req,res)=>{
  *         description: category id
  */
 Router.get("/:id/events",async(req,res)=>{ 
-    response(res,RESPONSETYPE.OK,"reached");
+    response(res,RESPONSETYPE.OK,getEventsByPredicate({category:req.params.id}));
 })
 
 /**
@@ -87,6 +93,8 @@ Router.get("/:id/events",async(req,res)=>{
  * /v1/category:
  *   post:
  *     description: create a category 
+ *     tags:
+ *        [Category]
  *     security:
  *     bearerAuth: [] 
  *     responses:
@@ -118,6 +126,8 @@ validateCategory(),async(req,res)=>{
  * /v1/category/{id}:
  *   put:
  *     description: edit a category 
+ *     tags:
+ *        [Category]
  *     security:
  *        bearerAuth: []
  *     responses:
@@ -157,6 +167,8 @@ validateCategory(),async(req,res)=>{
  * /v1/category/{id}:
  *   delete:
  *     description: deletes category
+ *     tags:
+ *        [Category]
  *     responses:
  *       200:
  *         description: ok message.

@@ -44,6 +44,8 @@ Router.get("/:orderNumber",async(req,res)=>{
  * /v1/order:
  *   post:
  *     description: gets the images and create an order
+ *     tags:
+ *        [Order]
  *     responses:
  *       200:
  *         description: Returns a the new order.
