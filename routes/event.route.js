@@ -9,7 +9,8 @@ const {getEventsByPredicate,
     getEventById,
     createEvent,
     updateEvent,
-    deleteEvent} = require("../repository/event.repository")
+    deleteEvent} = require("../repository/event.repository");
+const ROLES = require('../model/role');
 
     /**
  * @openapi
@@ -99,10 +100,9 @@ Router.get("/:id",async(req,res)=>{
  */
 Router.post("/", 
 auth_middleware(),
-role([Role.ADMIN]),
+role(ROLES.ADMIN),
 validateEvent(),async(req,res)=>{ 
     var errors = validationResult(req).array()
-    console.log(req.User)
     if(errors.length != 0){
         response(res,RESPONSETYPE.BAD_REQUEST,errors)
     }
@@ -139,7 +139,7 @@ validateEvent(),async(req,res)=>{
  */
 Router.put("/:id", 
 auth_middleware(),
-role([Role.ADMIN]),
+role(Role.ADMIN),
 validateEvent(),async(req,res)=>{ 
     var errors = validationResult(req).array()
 
@@ -180,7 +180,7 @@ validateEvent(),async(req,res)=>{
  */
 Router.delete("/:id", 
 auth_middleware(),
-role([Role.ADMIN]),
+role(Role.ADMIN),
 async(req,res)=>{ 
     response(res,RESPONSETYPE.OK,await deleteEvent(req.params.id));
 })

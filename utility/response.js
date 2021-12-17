@@ -3,7 +3,8 @@ const RESPONSETYPE ={
     OK:1,
     BAD_REQUEST:2,
     INTERNAL_SERVER_ERROR:3,
-    UNAUTHORIZED:4 
+    UNAUTHORIZED:4,
+    FORBIDDEN:5 
 }
 Object.freeze(RESPONSETYPE)
 
@@ -23,6 +24,8 @@ const response = (res,responseType,result,message)=>{
         break;
         case RESPONSETYPE.INTERNAL_SERVER_ERROR:
          return  res.status(500).send({data:result,message}) 
+        case RESPONSETYPE.FORBIDDEN:
+          return  res.status(403).send({data:result,message}) 
     
         default:
          return   res.status(500).send({data:result,message})

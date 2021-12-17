@@ -109,7 +109,7 @@ Router.get("/:id/events",async(req,res)=>{
  */
 Router.post("/", 
 auth_middleware(),
-role([Role.ADMIN]),
+role(Role.ADMIN),
 validateCategory(),async(req,res)=>{ 
     var errors = validationResult(req).array()
 
@@ -149,7 +149,7 @@ validateCategory(),async(req,res)=>{
  */
 Router.put("/:id", 
 auth_middleware(),
-role([Role.ADMIN]),
+role(Role.ADMIN),
 validateCategory(),async(req,res)=>{ 
     var errors = validationResult(req).array()
 
@@ -182,7 +182,7 @@ validateCategory(),async(req,res)=>{
  */
 Router.delete("/:id", 
 auth_middleware(),
-role([Role.ADMIN])
+role(Role.ADMIN)
 ,async(req,res)=>{ 
     response(res,RESPONSETYPE.OK,await deleteCategory(req.params.id));
 })

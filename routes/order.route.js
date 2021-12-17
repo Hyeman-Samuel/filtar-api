@@ -58,7 +58,7 @@ Router.get("/:orderNumber",async(req,res)=>{
  */
 Router.post("/",
 auth_middleware(),
-role([ROLES.USER,ROLES.ADMIN]),
+role(ROLES.USER,ROLES.ADMIN),
 validateOrder(),async(req,res)=>{ 
     const event = await getEventById(req.body.event)
     if(!event) response(res,RESPONSETYPE.NOTFOUND,"event not found");

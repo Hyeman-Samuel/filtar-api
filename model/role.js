@@ -1,8 +1,8 @@
 const ROLES={
-    ADMIN:0,
-    USER:1,
-    ARDEV:2,
-    DELIVERY:3  
+    ADMIN:"ADMIN",
+    USER:"USER",
+    ARDEV:"ARDEV",
+    DELIVERY:"DELIVERY"  
 }
 Object.freeze(ROLES)
 

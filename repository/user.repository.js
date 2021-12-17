@@ -16,7 +16,7 @@ createUser:async function (user){
     {"email":user.email,
     "role":ROLES.USER});
     _user.setPassword(user.password);
-    await _user.save();
+   return await _user.save();
 },
 
 validatePassword:async function (email,password){

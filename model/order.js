@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const ORDERSTAGES={
-    PAYMENT_REQUIRED:0,
-    PENDING:1,
-    UPLOADED:2,
-    DELIVERED:3,
-    CANCELLED:4  
+    PAYMENT_REQUIRED:"PAYMENT_REQUIRED",
+    PENDING:"PENDING",
+    UPLOADED:"UPLOADED",
+    DELIVERED:"DELIVERED",
+    CANCELLED:"CANCELLED"  
 }
 Object.freeze(ORDERSTAGES)
 
