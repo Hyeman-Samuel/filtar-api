@@ -15,5 +15,10 @@ module.exports ={
         const _order = new Order(order)
         await _order.save();
         return _order;
+    },
+    uploadOrder:async function(orderId,arrayOfLinks){
+        const _order =await Order.findById(orderId);
+        await _order.save();
+        return _order;
     }
 }

@@ -3,7 +3,7 @@ const { check } = require('express-validator');
 const Router = express.Router();
 const auth_middleware = require("../middleware/auth_middleware");
 const {response,RESPONSETYPE} = require("../utility/response")
-const {createOrder} = require("../repository/order.repository")
+const {createOrder,getOrderByPredicate,getOrdersByPredicate} = require("../repository/order.repository")
 const {SendTextEmail}= require("../utility/mailer")
 const {getEventById}=require("../repository/event.repository")
 const role=require("../middleware/role_middleware");
@@ -29,12 +29,16 @@ const ROLES = require('../model/role');
 
 
 
-Router.get("/",async(req,res)=>{ 
+Router.get("/",auth_middleware(),async(req,res)=>{ 
+
     response(res,RESPONSETYPE.OK,"reached");
 })
 
 Router.get("/:orderNumber",async(req,res)=>{ 
-    response(res,RESPONSETYPE.OK,"reached");
+    const order = await getOrderByPredicate({"orderNumber":req.params.orderNumber});
+    if(!order) response(res,RESPONSETYPE.NOTFOUND,"Order not found.");
+
+    response(res,RESPONSETYPE.OK,order);
 })
 
 
@@ -82,11 +86,15 @@ Router.get("/payment/callback",async(req,res)=>{
     response(res,RESPONSETYPE.OK,"reached");
 })
 
-Router.post("/upload",async(req,res)=>{ 
+Router.post("/upload",
+auth_middleware(),
+role(ROLES.ARDEV),async(req,res)=>{ 
     response(res,RESPONSETYPE.OK,"reached");
 })
 
-Router.post("/deliever",async(req,res)=>{ 
+Router.post("/deliever",
+auth_middleware(),
+role(ROLES.DELIVERY),async(req,res)=>{ 
     response(res,RESPONSETYPE.OK,"reached");
 })
 
