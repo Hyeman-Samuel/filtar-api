@@ -1,6 +1,6 @@
 const {response,RESPONSETYPE} = require("../utility/response")
 const jwt = require('jsonwebtoken');
-const {User} = require("../model/user");
+const {getUserById} = require("../repository/user.repository");
 module.exports =()=>  (req,res,next)=>{
     if(!req.headers.authorization)
         response(res,RESPONSETYPE.UNAUTHORIZED,"Invalid token","UNAUTHORIZED")
@@ -13,7 +13,7 @@ module.exports =()=>  (req,res,next)=>{
     jwt.verify(splitAuthHeader[1],process.env.JWT_SECRET,async (err,user)=>{
         if(err)response(res,RESPONSETYPE.UNAUTHORIZED,err.message,"UNAUTHORIZED")
 
-        const _user = await User.findById(user.id)
+        const _user = await getUserById(user.id)
         req.User = _user
         next()
     })

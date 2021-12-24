@@ -1,5 +1,6 @@
 const Express= require('express');
-const mongoDB = require("./utility/mongoDb");
+//const mongoDB = require("./utility/mongoDb");
+
 const bodyParser = require("./utility/bodyParser");
 const swagger = require("./utility/swagger");
 const {Logger} = require("./utility/logger");
@@ -7,7 +8,7 @@ const {response,RESPONSETYPE} = require("./utility/response")
 const errorMiddleware = require("./middleware/exception_middleware")
 require('express-async-errors');
 require('dotenv').config()
-
+const mysql = require("./utility/mysql");
 
 
 const welcome = require("./routes/welcome");
@@ -35,7 +36,13 @@ const app = Express();
 app.use(Express.json());
 
 app.set('port', process.env.PORT || 3000)
-mongoDB();
+//mongoDB();
+
+mysql.sequelize.sync().then(() => {
+  Logger.info("connected to mysql")
+  }
+)
+
 bodyParser(app);
 swagger(app);
 app.use("/v1/event",event);

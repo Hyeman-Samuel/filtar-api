@@ -4,7 +4,7 @@ const auth_middleware = require("../middleware/auth_middleware");
 const {response,RESPONSETYPE} = require("../utility/response")
 const {check, validationResult } = require('express-validator');
 const role=require("../middleware/role_middleware");
-const Role = require("../model/role")
+const ROLES = require("../models/role")
 const {getCategoriesByPredicate,
     getCategoryById,
     createCategory,
@@ -109,7 +109,7 @@ Router.get("/:id/events",async(req,res)=>{
  */
 Router.post("/", 
 auth_middleware(),
-role(Role.ADMIN),
+role(ROLES.ADMIN),
 validateCategory(),async(req,res)=>{ 
     var errors = validationResult(req).array()
 
@@ -149,7 +149,7 @@ validateCategory(),async(req,res)=>{
  */
 Router.put("/:id", 
 auth_middleware(),
-role(Role.ADMIN),
+role(ROLES.ADMIN),
 validateCategory(),async(req,res)=>{ 
     var errors = validationResult(req).array()
 
@@ -182,7 +182,7 @@ validateCategory(),async(req,res)=>{
  */
 Router.delete("/:id", 
 auth_middleware(),
-role(Role.ADMIN)
+role(ROLES.ADMIN)
 ,async(req,res)=>{ 
     response(res,RESPONSETYPE.OK,await deleteCategory(req.params.id));
 })

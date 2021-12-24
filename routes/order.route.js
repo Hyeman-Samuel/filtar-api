@@ -7,8 +7,7 @@ const {createOrder,getOrderByPredicate,getOrdersByPredicate} = require("../repos
 const {SendTextEmail}= require("../utility/mailer")
 const {getEventById}=require("../repository/event.repository")
 const role=require("../middleware/role_middleware");
-const Role = require("../model/role");
-const ROLES = require('../model/role');
+const ROLES = require('../models/role');
    /**
  * @openapi
  *components:

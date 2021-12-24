@@ -4,13 +4,12 @@ const auth_middleware = require("../middleware/auth_middleware");
 const {response,RESPONSETYPE} = require("../utility/response")
 const {check, validationResult } = require('express-validator');
 const role=require("../middleware/role_middleware");
-const Role = require("../model/role")
 const {getEventsByPredicate,
     getEventById,
     createEvent,
     updateEvent,
     deleteEvent} = require("../repository/event.repository");
-const ROLES = require('../model/role');
+const ROLES = require('../models/role');
 
     /**
  * @openapi
@@ -139,7 +138,7 @@ validateEvent(),async(req,res)=>{
  */
 Router.put("/:id", 
 auth_middleware(),
-role(Role.ADMIN),
+role(ROLES.ADMIN),
 validateEvent(),async(req,res)=>{ 
     var errors = validationResult(req).array()
 
@@ -180,7 +179,7 @@ validateEvent(),async(req,res)=>{
  */
 Router.delete("/:id", 
 auth_middleware(),
-role(Role.ADMIN),
+role(ROLES.ADMIN),
 async(req,res)=>{ 
     response(res,RESPONSETYPE.OK,await deleteEvent(req.params.id));
 })
