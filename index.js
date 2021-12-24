@@ -16,6 +16,7 @@ const user = require("./routes/user.route");
 const category =  require("./routes/category.route");
 const package =  require("./routes/package.route");
 const order = require("./routes/order.route");
+const platform = require("./routes/platform.route");
 
 
 
@@ -47,6 +48,7 @@ bodyParser(app);
 swagger(app);
 app.use("/v1/package",package);
 app.use("/v1/order",order);
+app.use("/v1/platform",platform);
 app.use("/v1/category",category);
 app.use("/v1/auth",user);
 app.use("/v1/",welcome);

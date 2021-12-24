@@ -10,7 +10,6 @@ const sequelize = new Sequelize(process.env.DATABASE_NAME, process.env.DATABASE_
     idle: 10000
   }
 });
-//var conn=mysql.createConnection({host:"devtest.mysql.database.azure.com", user:"hyeman", password:"{your_password}", database:"{your_database}", port:3306, ssl:{ca:fs.readFileSync("{ca-cert filename}")}});
 const db = {};
 
 db.Sequelize = Sequelize;
@@ -18,18 +17,28 @@ db.sequelize = sequelize;
 db.users = require("../models/user")(sequelize, Sequelize.DataTypes);
 db.category = require("../models/category")(sequelize,Sequelize.DataTypes);
 db.package = require("../models/packages")(sequelize,Sequelize.DataTypes);
+db.platform = require("../models/platform")(sequelize,Sequelize.DataTypes);
 
 
 
 
-
+///CategoryPackage
 db.category.associate = models=>{
   db.category.belongsToMany(models.Packages,{through:"CategoryPackage"})
 }
-
 db.package.associate = models=>{
   db.package.belongsToMany(models.Category,{through:"CategoryPackage"})
 }
+///
 
+
+///PlatformPackage
+db.package.associate = models=>{
+  db.package.belongsToMany(models.Platform,{through:"PlatformPackage"})
+}
+db.platform.associate = models=>{
+  db.platform.belongsToMany(models.Packages,{through:"PlatformPackage"})
+} 
+////
 
 module.exports = db;

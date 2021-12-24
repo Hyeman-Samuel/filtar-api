@@ -1,5 +1,5 @@
 const Package= require("../utility/mysql").package;
-
+const { uuid } = require('uuidv4');
 
 module.exports ={
     getPackageById:async function (packageId){
@@ -12,6 +12,7 @@ module.exports ={
         return await Package.find(obj);
     },
     createPackage:async function(package){
+        package.id = uuid();
         const _package = await Package.create(package)
         await _package.toJSON();
         return _package
