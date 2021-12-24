@@ -20,11 +20,10 @@ return jwt.sign({
 module.exports={
 getUserById:async function (userId){
     const userModel = await (await User.findOne({"id":userId})).toJSON()
-    console.log(userModel)
     const user={
-    "id":userModel.getDataValue("id"),
-    "email":userModel.getDataValue("email"),
-    "role":userModel.getDataValue("role")
+    "id":userModel.id,
+    "email":userModel.email,
+    "role":userModel.role
     }
     return user;
 
@@ -51,8 +50,8 @@ validatePassword:async function (email,password){
     const user = await (await User.findOne({"email":email})).toJSON()
     if(!user) return false;
 
-    const hash = crypto.pbkdf2Sync(password,user.getDataValue("salt"), 10000, 512, 'sha512').toString('hex');
-    return user.getDataValue("hash") === hash;
+    const hash = crypto.pbkdf2Sync(password,user.salt, 10000, 512, 'sha512').toString('hex');
+    return user.hash === hash;
 }
 ,authJwt:async function (userId){
     const user = await (await User.findOne({"id":userId})).toJSON();

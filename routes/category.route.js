@@ -10,7 +10,6 @@ const {getCategoriesByPredicate,
     createCategory,
     deleteCategory,
     updateCategory} = require("../repository/category.repository")
-const {getEventsByPredicate}= require("../repository/event.repository")
     /**
  * @openapi
  *components:
@@ -84,9 +83,9 @@ Router.get("/:id",async(req,res)=>{
  *         required: true
  *         description: category id
  */
-Router.get("/:id/events",async(req,res)=>{ 
-    response(res,RESPONSETYPE.OK,getEventsByPredicate({category:req.params.id}));
-})
+// Router.get("/:id/events",async(req,res)=>{ 
+//     response(res,RESPONSETYPE.OK,getEventsByPredicate({category:req.params.id}));
+// })
 
 /**
  * @openapi

@@ -15,7 +15,21 @@ const db = {};
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-const userModel = require("../models/user")
-db.users = userModel(sequelize, Sequelize.DataTypes);
+db.users = require("../models/user")(sequelize, Sequelize.DataTypes);
+db.category = require("../models/category")(sequelize,Sequelize.DataTypes);
+db.package = require("../models/packages")(sequelize,Sequelize.DataTypes);
+
+
+
+
+
+db.category.associate = models=>{
+  db.category.belongsToMany(models.Packages,{through:"CategoryPackage"})
+}
+
+db.package.associate = models=>{
+  db.package.belongsToMany(models.Category,{through:"CategoryPackage"})
+}
+
 
 module.exports = db;

@@ -14,7 +14,7 @@ const mysql = require("./utility/mysql");
 const welcome = require("./routes/welcome");
 const user = require("./routes/user.route");
 const category =  require("./routes/category.route");
-const event =  require("./routes/event.route");
+const package =  require("./routes/package.route");
 const order = require("./routes/order.route");
 
 
@@ -45,7 +45,7 @@ mysql.sequelize.sync().then(() => {
 
 bodyParser(app);
 swagger(app);
-app.use("/v1/event",event);
+app.use("/v1/package",package);
 app.use("/v1/order",order);
 app.use("/v1/category",category);
 app.use("/v1/auth",user);

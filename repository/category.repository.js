@@ -1,25 +1,28 @@
-const {Category}= require("../model/category");
+const Category = require("../utility/mysql").category
 
 
 module.exports ={
     getCategoryById:async function (categoryId){
-        return await Category.findById(categoryId);
+        return await Category.findOne({"id":categoryId});
         },
     getCategoryByPredicate:async function (obj){
         return await Category.findOne(obj);
     },
     getCategoriesByPredicate:async function (obj){
-        return await Category.find(obj);
+        return await Category.findAll(obj);
     },
     createCategory:async function(category){
-        const _category = new Category(category)
-        await _category.save();
+        const _category = await Category.create(category)
+        await _category.toJSON();
         return _category;
     },
     deleteCategory:async function(categoryId){
-       await Category.findByIdAndDelete(categoryId);
+        const _category = await Category.findOne({"id":categoryId});
+        await _category.destroy()
     },
     updateCategory:async function(categoryId,category){
-       return await Category.findByIdAndUpdate(categoryId,category)
+        const _category = await Category.findOne({"id":categoryId});
+        _category.set(category)
+       return await _category.save()
     }
 }

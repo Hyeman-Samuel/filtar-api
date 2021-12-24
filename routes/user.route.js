@@ -21,7 +21,7 @@ const {createUser,authJwt,validatePassword,getUserByPredicate}= require("../repo
 *           password:
 *            type: string
 *            description: password of the user.
-*           confirm-password:
+*           confirmPassword:
 *            type: string
 *            description: password of the user.
  */
