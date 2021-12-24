@@ -5,7 +5,6 @@ const auth_middleware = require("../middleware/auth_middleware");
 const {response,RESPONSETYPE} = require("../utility/response")
 const {createOrder,getOrderByPredicate,getOrdersByPredicate} = require("../repository/order.repository")
 const {SendTextEmail}= require("../utility/mailer")
-const {getEventById}=require("../repository/event.repository")
 const role=require("../middleware/role_middleware");
 const ROLES = require('../models/role');
    /**
