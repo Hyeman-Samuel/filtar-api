@@ -8,7 +8,7 @@ const {response,RESPONSETYPE} = require("./utility/response")
 const errorMiddleware = require("./middleware/exception_middleware")
 require('express-async-errors');
 require('dotenv').config()
-const mysql = require("./utility/mysql");
+const mysql = require("./persistence/mysql");
 
 
 const welcome = require("./routes/welcome");

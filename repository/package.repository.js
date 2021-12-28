@@ -1,15 +1,17 @@
-const Package= require("../utility/mysql").package;
+const Package= require("../persistence/mysql").package;
+const CategoryPackage= require("../persistence/mysql").CategoryPackage;
 const { uuid } = require('uuidv4');
 
 module.exports ={
     getPackageById:async function (packageId){
+        
         return await Package.findOne({"id":packageId});
         },
     getPackageByPredicate:async function (obj){
         return await Package.findOne(obj);
     },
     getPackagesByPredicate:async function (obj){
-        return await Package.find(obj);
+        return await Package.findAll(obj);
     },
     createPackage:async function(package){
         package.id = uuid();

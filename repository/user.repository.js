@@ -1,5 +1,5 @@
 //const {User} = require("../model/user")
-const User = require("../utility/mysql").users
+const User = require("../persistence/mysql").users
 const ROLES = require("../models/role");
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');

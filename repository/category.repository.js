@@ -1,4 +1,4 @@
-const Category = require("../utility/mysql").category
+const Category = require("../persistence/mysql").category
 const { uuid } = require('uuidv4');
 
 module.exports ={

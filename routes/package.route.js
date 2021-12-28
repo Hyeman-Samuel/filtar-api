@@ -4,7 +4,7 @@ const auth_middleware = require("../middleware/auth_middleware");
 const {response,RESPONSETYPE} = require("../utility/response")
 const {check, validationResult } = require('express-validator');
 const role=require("../middleware/role_middleware");
-const {getPackageById, createPackage, updatePackage, deletePackage, getPackageByPredicate} = require("../repository/package.repository");
+const {getPackageById, createPackage, updatePackage, deletePackage, getPackagesByPredicate} = require("../repository/package.repository");
 const ROLES = require('../models/role');
 
     /**
@@ -59,7 +59,7 @@ const ROLES = require('../models/role');
  *         description: Returns all packages.
  */
 Router.get("/",async(req,res)=>{ 
-    response(res,RESPONSETYPE.OK,await getPackageByPredicate());
+    response(res,RESPONSETYPE.OK,await getPackagesByPredicate());
 })
 
 

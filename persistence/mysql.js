@@ -19,26 +19,21 @@ db.category = require("../models/category")(sequelize,Sequelize.DataTypes);
 db.package = require("../models/packages")(sequelize,Sequelize.DataTypes);
 db.platform = require("../models/platform")(sequelize,Sequelize.DataTypes);
 
+db.CategoryPackage = require("../models/join/category_package")(sequelize,Sequelize.DataTypes,db.category,db.package);
+db.PlatformPackage = require("../models/join/platform_package")(sequelize,Sequelize.DataTypes,db.platform,db.package);
 
 
 
 ///CategoryPackage
-db.category.associate = models=>{
-  db.category.belongsToMany(models.Packages,{through:"CategoryPackage"})
-}
-db.package.associate = models=>{
-  db.package.belongsToMany(models.Category,{through:"CategoryPackage"})
-}
+
+db.category.belongsToMany(db.package,{through:db.CategoryPackage,uniqueKey:"CategoryId"})
+db.package.belongsToMany(db.category,{through:db.CategoryPackage,uniqueKey:"PackageId"})
 ///
 
 
 ///PlatformPackage
-db.package.associate = models=>{
-  db.package.belongsToMany(models.Platform,{through:"PlatformPackage"})
-}
-db.platform.associate = models=>{
-  db.platform.belongsToMany(models.Packages,{through:"PlatformPackage"})
-} 
+db.package.belongsToMany(db.platform,{through:db.PlatformPackage,uniqueKey:"PackageId"})
+db.platform.belongsToMany(db.package,{through:db.PlatformPackage,uniqueKey:"PlatformId"})
 ////
 
 module.exports = db;
