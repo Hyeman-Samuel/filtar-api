@@ -43,6 +43,9 @@ const ROLES = require('../models/role');
  *           infographicLink:
  *            type: string
  *            description: link to the infographic video of the package.
+ *           categories:
+ *            type: string
+ *            description: array of categories to be assigned to.
  */
 
 

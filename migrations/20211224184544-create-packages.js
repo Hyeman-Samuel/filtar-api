@@ -15,7 +15,8 @@ module.exports = {
       },
       packageAlias: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        unique:true
       },
       numberOfHashtags: {
         type: Sequelize.INTEGER
@@ -28,6 +29,12 @@ module.exports = {
       },
       numberOfImages: {
         type: Sequelize.INTEGER
+      },
+      active: {
+        type: Sequelize.BOOLEAN
+      },
+      mustReachOut:{
+        type: Sequelize.BOOLEAN
       },
       infographicLink: {
         type: Sequelize.JSON,

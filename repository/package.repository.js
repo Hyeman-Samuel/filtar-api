@@ -1,10 +1,11 @@
+const sequelize = require("../persistence/mysql").sequelize
 const Package= require("../persistence/mysql").package;
 const CategoryPackage= require("../persistence/mysql").CategoryPackage;
+const PlatfromPackage= require("../persistence/mysql").PlatformPackage;
 const { uuid } = require('uuidv4');
 
 module.exports ={
-    getPackageById:async function (packageId){
-        
+    getPackageById:async function (packageId){       
         return await Package.findOne({"id":packageId});
         },
     getPackageByPredicate:async function (obj){
@@ -15,8 +16,12 @@ module.exports ={
     },
     createPackage:async function(package){
         package.id = uuid();
-        const _package = await Package.create(package)
-        await _package.toJSON();
+        let _package = await (await Package.create(package)).toJSON()
+        if(package.categories){
+        package.categories.forEach(async (categoryId) => {
+            await CategoryPackage.create({PackageId:_package.id,CategoryId:categoryId})
+      })
+    }
         return _package
     },
     deletePackage:async function(packageId){

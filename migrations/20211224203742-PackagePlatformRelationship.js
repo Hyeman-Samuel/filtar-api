@@ -19,11 +19,21 @@ module.exports = {
         },
         PlatformId: {
           type: Sequelize.UUID,
+          references: {
+            model: 'Platforms',
+            key: 'id',
+          },
+          onDelete: 'cascade',
           primaryKey: true,
           allowNull: false,
         },
         PackageId: {
           type: Sequelize.UUID,
+          references: {
+            model: 'Packages',
+            key: 'id',
+          },
+          onDelete: 'cascade',
           primaryKey: true,
           allowNull: false,
         },

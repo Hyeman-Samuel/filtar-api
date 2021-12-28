@@ -16,11 +16,21 @@ module.exports = {
         },
         CategoryId: {
           type: Sequelize.UUID,
+          references: {
+              model: 'Categories',
+              key: 'id',
+            },
+          onDelete: 'cascade',
           primaryKey: true,
           allowNull: false,
         },
         PackageId: {
           type: Sequelize.UUID,
+          references: {
+            model: 'Packages',
+            key: 'id',
+          },
+          onDelete: 'cascade',
           primaryKey: true,
           allowNull: false,
         },

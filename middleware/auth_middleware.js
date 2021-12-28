@@ -14,6 +14,7 @@ module.exports =()=>  (req,res,next)=>{
         if(err)response(res,RESPONSETYPE.UNAUTHORIZED,err.message,"UNAUTHORIZED")
 
         const _user = await getUserById(user.id)
+    if(!_user) response(res,RESPONSETYPE.UNAUTHORIZED,"User does not exist","UNAUTHORIZED")
         req.User = _user
         next()
     })

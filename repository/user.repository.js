@@ -19,13 +19,14 @@ return jwt.sign({
 
 module.exports={
 getUserById:async function (userId){
-    const userModel = await (await User.findOne({"id":userId})).toJSON()
-    const user={
-    "id":userModel.id,
-    "email":userModel.email,
-    "role":userModel.role
+    const userModel = await User.findOne({"id":userId})
+    if(!userModel){
+    return null
+    }else{
+        const user = await userModel.toJSON()
+        return user;
     }
-    return user;
+    
 
 },
 getUserByPredicate:async function (obj){
