@@ -20,7 +20,8 @@ module.exports = (sequelize, DataTypes) => {
     numberOfSongs: DataTypes.INTEGER,
     numberOfFrames: DataTypes.INTEGER,
     numberOfImages: DataTypes.INTEGER,
-    infographicLink: DataTypes.JSON
+    infographicLink: DataTypes.JSON,
+    active: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'Packages',

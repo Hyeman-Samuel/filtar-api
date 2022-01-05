@@ -65,7 +65,7 @@ validateOrder(),async(req,res)=>{
     const event = await getEventById(req.body.event)
     if(!event) response(res,RESPONSETYPE.NOTFOUND,"event not found");
     const order = {
-        orderNumber: Math.floor(1000 + Math.random() * 9000),
+        orderNumber: randomStr(5),
         price:event.price,
         images: req.body.images,
         event:event._id,
@@ -110,3 +110,14 @@ function validateOrder(){
        check('images','Images are required').isArray({min:1})
    ]
    }
+
+
+   function randomStr(len) {
+       arr = ["123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
+    var ans = '';
+    for (var i = len; i > 0; i--) {
+        ans += 
+          arr[Math.floor(Math.random() * arr.length)];
+    }
+    return ans;
+}
