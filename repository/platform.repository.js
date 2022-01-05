@@ -1,4 +1,4 @@
-const Platform = require("../persistence/mysql").platform
+const {Platform} = require("../persistence/mysql")
 const PLATFORM = require("../constants/platform")
 const { uuid } = require('uuidv4');
 

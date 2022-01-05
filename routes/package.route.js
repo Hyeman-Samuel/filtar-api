@@ -4,7 +4,7 @@ const auth_middleware = require("../middleware/auth_middleware");
 const {response,RESPONSETYPE} = require("../utility/response")
 const {check, validationResult } = require('express-validator');
 const role=require("../middleware/role_middleware");
-const {getPackageById, createPackage, updatePackage, deletePackage, getPackagesByPredicate} = require("../repository/package.repository");
+const {getPackageById, createPackage, updatePackage, deletePackage, getPackagesByPredicate, addToCategory, addPlatform} = require("../repository/package.repository");
 const ROLES = require('../models/role');
 
     /**
@@ -120,12 +120,79 @@ validatePackage(),async(req,res)=>{
     if(errors.length != 0){
         response(res,RESPONSETYPE.BAD_REQUEST,errors)
     }
-    if(req.body.infographicLink){
-        req.body.infographicLink = `{link:${req.body.infographicLink}}`
-    }
+    // if(req.body.infographicLink){
+    //     req.body.infographicLink = `{link:${req.body.infographicLink}}`
+    // }
     
     response(res,RESPONSETYPE.OK,await createPackage(req.body));
 })
+
+
+
+/**
+ * @openapi
+ * /v1/package/{id}/category/{categoryId}:
+ *   post:
+ *     description: adds a category to a package
+ *     tags:
+ *        [Package]
+ *     responses:
+ *       200:
+ *         description: Returns 200.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *            type: integer
+ *         required: true
+ *         description: package id
+ */
+Router.post("/:id/category/:categoryId", 
+auth_middleware(),
+role(ROLES.ADMIN),
+validatePackage(),async(req,res)=>{ 
+    var errors = validationResult(req).array()
+    if(errors.length != 0){
+        response(res,RESPONSETYPE.BAD_REQUEST,errors)
+    }
+    // if(req.body.infographicLink){
+    //     req.body.infographicLink = `{link:${req.body.infographicLink}}`
+    // }
+    
+    response(res,RESPONSETYPE.OK,await addToCategory(req.params.id,req.params.categoryId));
+})
+
+
+
+/**
+ * @openapi
+ * /v1/package/{id}/platform/{platformId}:
+ *   post:
+ *     description: adds a platform to a package
+ *     tags:
+ *        [Package]
+ *     responses:
+ *       200:
+ *         description: Returns 200.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *            type: integer
+ *         required: true
+ *         description: package id
+ */
+ Router.post("/:id/platform/:platformId", 
+ auth_middleware(),
+ role(ROLES.ADMIN),
+ validatePlatfromPrice(),async(req,res)=>{ 
+     var errors = validationResult(req).array()
+     if(errors.length != 0){
+         response(res,RESPONSETYPE.BAD_REQUEST,errors)
+     }
+     
+     response(res,RESPONSETYPE.OK,await addPlatform(req.params.id,req.params.platformId,req.body.price));
+ })
 
 
 
@@ -159,9 +226,9 @@ role(ROLES.ADMIN),async(req,res)=>{
         response(res,RESPONSETYPE.BAD_REQUEST,errors)
     }
 
-    if(req.body.infographicLink){
-        req.body.infographicLink = `{link:${req.body.infographicLink}}`
-    }
+    // if(req.body.infographicLink){
+    //     req.body.infographicLink = `${req.body.infographicLink}}`
+    // }
     
     response(res,RESPONSETYPE.OK,await updatePackage(req.params.id,req.body));
 })
@@ -212,6 +279,12 @@ function validatePackage(){
     check('numberOfSongs', 'numberOfSongs is required'),
     check('numberOfFrames', 'numberOfFrames is required'),
     check('numberOfImages', 'numberOfImages is required'),
-    check('infographicLink', 'infographicLink is required'),
+    check('infographicLink', 'infographicLink is not correct').isArray({max:2}),
+   ]
+   }
+
+   function validatePlatfromPrice(){
+    return [  
+    check('price', 'price is required'),
    ]
    }

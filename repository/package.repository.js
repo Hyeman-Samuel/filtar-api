@@ -1,7 +1,4 @@
-const sequelize = require("../persistence/mysql").sequelize
-const Package= require("../persistence/mysql").package;
-const CategoryPackage= require("../persistence/mysql").CategoryPackage;
-const PlatfromPackage= require("../persistence/mysql").PlatformPackage;
+const {CategoryPackage,PlatformPackage,Package,Transaction} = require("../persistence/mysql")
 const { uuid } = require('uuidv4');
 
 module.exports ={
@@ -17,12 +14,18 @@ module.exports ={
     createPackage:async function(package){
         package.id = uuid();
         let _package = await (await Package.create(package)).toJSON()
-        if(package.categories){
-        package.categories.forEach(async (categoryId) => {
-            await CategoryPackage.create({PackageId:_package.id,CategoryId:categoryId})
-      })
-    }
         return _package
+    },
+    addToCategory:async function(packageId,categoryId){
+       return await (await CategoryPackage.create({PackageId:packageId,CategoryId:categoryId})).toJSON()
+    },
+    addToCategories:async function(packageId,categoryIds){
+        categoryIds.forEach(async (categoryId) => {
+            await CategoryPackage.create({PackageId:packageId,CategoryId:categoryId})
+      })
+    },
+    addPlatform:async function(packageId,platformId,price){
+       return await (await PlatformPackage.create({id:uuid,PlatformId:platformId,PackageId:packageId,price:price})).toJSON()  
     },
     deletePackage:async function(packageId){
         const _package = await Package.findOne({"id":packageId});

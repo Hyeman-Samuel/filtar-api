@@ -14,26 +14,79 @@ const db = {};
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.users = require("../models/user")(sequelize, Sequelize.DataTypes);
-db.category = require("../models/category")(sequelize,Sequelize.DataTypes);
-db.package = require("../models/packages")(sequelize,Sequelize.DataTypes);
-db.platform = require("../models/platform")(sequelize,Sequelize.DataTypes);
+db.Users = require("../models/user")(sequelize, Sequelize.DataTypes);
+db.Category = require("../models/category")(sequelize,Sequelize.DataTypes);
+db.Package = require("../models/packages")(sequelize,Sequelize.DataTypes);
+db.Platform = require("../models/platform")(sequelize,Sequelize.DataTypes);
 
-db.CategoryPackage = require("../models/join/category_package")(sequelize,Sequelize.DataTypes,db.category,db.package);
-db.PlatformPackage = require("../models/join/platform_package")(sequelize,Sequelize.DataTypes,db.platform,db.package);
+db.CategoryPackage = require("../models/join/category_package")(sequelize,Sequelize.DataTypes,db.Category,db.Package);
+db.PlatformPackage = require("../models/join/platform_package")(sequelize,Sequelize.DataTypes,db.Platform,db.Package);
 
 
 
 ///CategoryPackage
 
-db.category.belongsToMany(db.package,{through:db.CategoryPackage,uniqueKey:"CategoryId"})
-db.package.belongsToMany(db.category,{through:db.CategoryPackage,uniqueKey:"PackageId"})
+db.Category.belongsToMany(db.Package,{through:db.CategoryPackage,uniqueKey:"CategoryId"})
+db.Package.belongsToMany(db.Category,{through:db.CategoryPackage,uniqueKey:"PackageId"})
 ///
 
 
 ///PlatformPackage
-db.package.belongsToMany(db.platform,{through:db.PlatformPackage,uniqueKey:"PackageId"})
-db.platform.belongsToMany(db.package,{through:db.PlatformPackage,uniqueKey:"PlatformId"})
+db.Package.belongsToMany(db.Platform,{through:db.PlatformPackage,uniqueKey:"PackageId"})
+db.Platform.belongsToMany(db.Package,{through:db.PlatformPackage,uniqueKey:"PlatformId"})
 ////
 
+
+db.Transaction = {
+  create : async ()=>{
+    try{
+        const t = await sequelize.transaction({
+            autocommit:false
+        })
+
+        return Promise.resolve({
+            status:true,
+            data:t
+        })
+    }catch(error){
+        return Promise.reject({
+            status:false,
+            error
+        })
+    }
+}
+,commit :async (transaction)=>{
+    try{
+        await transaction.commit()
+        return Promise.resolve({
+            status:true,
+            data:t
+        })
+    }catch(error){
+        await transaction.rollback()
+        return Promise.reject({
+            status:false,
+            error
+        })
+
+    }
+}
+,rollback : async (transaction)=>{
+
+    try{
+        await transaction.rollback()
+        return Promise.resolve({
+            status:true
+        })
+    }catch(error){
+        return Promise.reject({
+            status:false,
+            error
+        })
+
+    }
+
+}
+
+}
 module.exports = db;
