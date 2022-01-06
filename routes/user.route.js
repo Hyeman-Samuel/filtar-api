@@ -106,7 +106,9 @@ Router.post("/signup",validateSignUp(),async(req,res)=>{
     var user = {
         email:req.body.email.toLowerCase(),
         password:req.body.password,
-        confirmPassword:req.body.passport
+        confirmPassword:req.body.passport,
+        firstName:req.body.firstName,
+        lastName:req.body.lastName
     }
    const newUser = await createUser(user);
 
@@ -133,6 +135,8 @@ module.exports = Router
 function validateSignUp(){
     return [  check('email', 'Email is required'),
        check('password', 'Password is requried'),
+       check('firstName', 'firstName is requried'),
+       check('lastName', 'lastName is requried'),
        check('confirmPassword', 'Password Confirmation is requried')
        .isLength({ min: 1 })
    ]

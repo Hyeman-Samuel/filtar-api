@@ -13,6 +13,14 @@ module.exports = {
         allowNull: false,
         unique: true
       },
+      firstName: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      lastName: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
       hash: {
         type: Sequelize.STRING(10000),
         allowNull: false,
@@ -26,11 +34,9 @@ module.exports = {
         allowNull: false
       },
       createdAt: {
-        allowNull: false,
         type: Sequelize.DATE
       },
       updatedAt: {
-        allowNull: false,
         type: Sequelize.DATE
       }
     });
