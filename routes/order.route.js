@@ -3,7 +3,7 @@ const { check } = require('express-validator');
 const Router = express.Router();
 const auth_middleware = require("../middleware/auth_middleware");
 const {response,RESPONSETYPE} = require("../utility/response")
-const {createOrder,getOrderByPredicate,getOrdersByPredicate} = require("../repository/order.repository")
+//const {createOrder,getOrderByPredicate} = require("../repository/order.repository")
 const {SendTextEmail}= require("../utility/mailer")
 const role=require("../middleware/role_middleware");
 const ROLES = require('../models/role');
@@ -45,7 +45,7 @@ Router.get("/:orderNumber",async(req,res)=>{
  * @openapi
  * /v1/order:
  *   post:
- *     description: gets the images and create an order
+ *     description: gets the images and create an order(not fully functioning yet)
  *     tags:
  *        [Order]
  *     responses:
@@ -58,26 +58,26 @@ Router.get("/:orderNumber",async(req,res)=>{
  *              schema:    
  *                  $ref: '#/components/schemas/Order'
  */
-Router.post("/",
-auth_middleware(),
-role(ROLES.USER,ROLES.ADMIN),
-validateOrder(),async(req,res)=>{ 
-    const event = await getEventById(req.body.event)
-    if(!event) response(res,RESPONSETYPE.NOTFOUND,"event not found");
-    const order = {
-        orderNumber: randomStr(5),
-        price:event.price,
-        images: req.body.images,
-        event:event._id,
-        buyer:req.User._id,
-    }
+// Router.post("/",
+// auth_middleware(),
+// role(ROLES.USER,ROLES.ADMIN),
+// validateOrder(),async(req,res)=>{ 
+//     const event = await getEventById(req.body.event)
+//     if(!event) response(res,RESPONSETYPE.NOTFOUND,"event not found");
+//     const order = {
+//         orderNumber: randomStr(5),
+//         price:event.price,
+//         images: req.body.images,
+//         event:event._id,
+//         buyer:req.User._id,
+//     }
 
-   const newOrder = await createOrder(order);
-    SendTextEmail(req.User.email,`You have just order for an AR filter`,`${newOrder.orderNumber} Confirmation`)
+//    const newOrder = await createOrder(order);
+//     //SendTextEmail(req.User.email,`You have just order for an AR filter`,`Order ${newOrder.orderNumber} Confirmation`)
 
-    ////flutterwave
-    response(res,RESPONSETYPE.OK,newOrder,"order is ready to be fulfilled");
-})
+//     ////flutterwave
+//     response(res,RESPONSETYPE.OK,newOrder,"order is ready to be fulfilled");
+// })
 
 
 Router.get("/payment/callback",async(req,res)=>{ 
@@ -105,7 +105,9 @@ module.exports = Router
 
 
 function validateOrder(){
-    return [  check('event', 'Event is required'),
+    return [  check('package', 'package is required'),
+        check('category', 'category is required'),
+        check('platforms', 'platforms are required').isArray({min:1}),
        check('price', 'Price is requried'),
        check('images','Images are required').isArray({min:1})
    ]
