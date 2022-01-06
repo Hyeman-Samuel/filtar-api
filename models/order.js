@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes,User,Category,Package) => {
     price: DataTypes.NUMBER,
     stage: DataTypes.STRING,
     images: DataTypes.JSON,
+    songs: DataTypes.JSON,
     arFilterLink: DataTypes.JSON,
     PackageId: {
       type: DataTypes.UUID,

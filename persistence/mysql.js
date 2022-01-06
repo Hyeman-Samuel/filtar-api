@@ -18,6 +18,9 @@ db.Users = require("../models/user")(sequelize, Sequelize.DataTypes);
 db.Category = require("../models/category")(sequelize,Sequelize.DataTypes);
 db.Package = require("../models/packages")(sequelize,Sequelize.DataTypes);
 db.Platform = require("../models/platform")(sequelize,Sequelize.DataTypes);
+db.Order = require("../models/order")(sequelize,Sequelize.DataTypes,db.Users,db.Category,db.Package);
+db.OrderDetails = require("../models/orderdetails")(sequelize,Sequelize.DataTypes,db.Order,db.Platform);
+
 
 db.CategoryPackage = require("../models/join/category_package")(sequelize,Sequelize.DataTypes,db.Category,db.Package);
 db.PlatformPackage = require("../models/join/platform_package")(sequelize,Sequelize.DataTypes,db.Platform,db.Package);

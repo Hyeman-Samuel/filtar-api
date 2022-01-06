@@ -4,9 +4,10 @@ module.exports = {
     await queryInterface.createTable('Orders', {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4
+
       },
       orderNumber: {
         type: Sequelize.STRING
@@ -20,6 +21,10 @@ module.exports = {
       images: {
         type: Sequelize.JSON,
         allowNull: false
+      },
+      songs: {
+        type: Sequelize.JSON,
+        allowNull: true
       },
       arFilterLink: {
         type: Sequelize.JSON,

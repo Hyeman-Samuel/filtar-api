@@ -2,6 +2,7 @@
 const { uuid } = require('uuidv4');
 const ROLES = require("../models/role");
 const crypto = require('crypto');
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const salt = crypto.randomBytes(16).toString('hex');
@@ -13,7 +14,9 @@ module.exports = {
         firstName:'Admin',
         lastName:'User',
         salt:salt,
-        role:ROLES.ADMIN
+        role:ROLES.ADMIN,
+        createdAt:new Date(),
+        updatedAt:new Date()
       },
       {
       id:uuid(),
@@ -22,7 +25,9 @@ module.exports = {
       firstName:'Daniel',
       lastName:'Wusu',
       salt:salt,
-      role:ROLES.ARDEV
+      role:ROLES.ARDEV,
+      createdAt:new Date(),
+      updatedAt:new Date()
     },
     {
       id:uuid(),
@@ -31,7 +36,9 @@ module.exports = {
       firstName:'Tito',
       lastName:'Shobanke',
       salt:salt,
-      role:ROLES.ARDEV
+      role:ROLES.ARDEV,
+      createdAt:new Date(),
+      updatedAt:new Date()
     },
     {
       id:uuid(),
@@ -40,7 +47,9 @@ module.exports = {
       firstName:'Seyi',
       lastName:'Adebanjo',
       salt:salt,
-      role:ROLES.ARDEV
+      role:ROLES.ARDEV,
+      createdAt:new Date(),
+      updatedAt:new Date()
     },
     {
       id:uuid(),
@@ -49,7 +58,9 @@ module.exports = {
       firstName:'Joel',
       lastName:'Fasanmi',
       salt:salt,
-      role:ROLES.ARDEV
+      role:ROLES.ARDEV,
+      createdAt:new Date(),
+      updatedAt:new Date()
     },
     {
       id:uuid(),
@@ -58,7 +69,9 @@ module.exports = {
       firstName:'Daniel',
       lastName:'Fasanmi',
       salt:salt,
-      role:ROLES.DELIVERY
+      role:ROLES.DELIVERY,
+      createdAt:new Date(),
+      updatedAt:new Date()
     },
     {
       id:uuid(),
@@ -67,13 +80,20 @@ module.exports = {
       firstName:'Oluchi',
       lastName:'Ogbonanya',
       salt:salt,
-      role:ROLES.DELIVERY
+      role:ROLES.DELIVERY,
+      createdAt:new Date(),
+      updatedAt:new Date()
     }
 
   ], {});
   },
 
   down: async (queryInterface, Sequelize) => {
-
+    /**
+     * Add commands to revert seed here.
+     *
+     * Example:
+     * await queryInterface.bulkDelete('People', null, {});
+     */
   }
 };
