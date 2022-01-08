@@ -12,7 +12,6 @@ module.exports =()=>  (req,res,next)=>{
 
     jwt.verify(splitAuthHeader[1],process.env.JWT_SECRET,async (err,user)=>{
         if(err)response(res,RESPONSETYPE.UNAUTHORIZED,err.message,"UNAUTHORIZED")
-
         const _user = await getUserById(user.id)
     if(!_user) response(res,RESPONSETYPE.UNAUTHORIZED,"User does not exist","UNAUTHORIZED")
         req.User = _user

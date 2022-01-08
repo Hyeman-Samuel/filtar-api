@@ -1,0 +1,7 @@
+const ORDERSTATUS={
+    PROCESSING:"PROCESSING",
+    UPLOADED:"UPLOADED" 
+}
+Object.freeze(ORDERSTATUS)
+
+module.exports = ORDERSTATUS

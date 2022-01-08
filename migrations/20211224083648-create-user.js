@@ -33,6 +33,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      workload : {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        defaultValue:0
+      },
       createdAt: {
         type: Sequelize.DATE
       },

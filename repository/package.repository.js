@@ -3,13 +3,16 @@ const { uuid } = require('uuidv4');
 
 module.exports ={
     getPackageById:async function (packageId){       
-        return await Package.findOne({"id":packageId});
+        let package= await Package.findOne({where:{"id":packageId}});
+        if(package) return await package.toJSON()
+
+        return null
         },
     getPackageByPredicate:async function (obj){
-        return await Package.findOne(obj);
+        return await Package.findOne({where:obj});
     },
     getPackagesByPredicate:async function (obj){
-        return await Package.findAll(obj);
+        return await Package.findAll({where:obj});
     },
     createPackage:async function(package){
         package.id = uuid();
@@ -28,11 +31,11 @@ module.exports ={
        return await (await PlatformPackage.create({id:uuid,PlatformId:platformId,PackageId:packageId,price:price})).toJSON()  
     },
     deletePackage:async function(packageId){
-        const _package = await Package.findOne({"id":packageId});
+        const _package = await Package.findOne({where:{"id":packageId}});
         await _package.destroy()
     },
     updatePackage:async function(packageId,package){
-        const _package = await Package.findOne({"id":packageId});
+        const _package = await Package.findOne({where:{"id":packageId}});
         _package.set(package)
        return await _package.save()
     }

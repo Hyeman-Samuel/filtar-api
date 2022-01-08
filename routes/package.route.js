@@ -150,7 +150,7 @@ validatePackage(),async(req,res)=>{
 Router.post("/:id/category/:categoryId", 
 auth_middleware(),
 role(ROLES.ADMIN),
-validatePackage(),async(req,res)=>{ 
+async(req,res)=>{ 
     var errors = validationResult(req).array()
     if(errors.length != 0){
         response(res,RESPONSETYPE.BAD_REQUEST,errors)

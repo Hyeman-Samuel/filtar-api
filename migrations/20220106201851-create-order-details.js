@@ -9,10 +9,17 @@ module.exports = {
         defaultValue: Sequelize.UUIDV4
       },
       price: {
-        type: Sequelize.STRING
+        type: Sequelize.DECIMAL(10,2)
       },
       status: {
         type: Sequelize.STRING
+      },
+      platformName: {
+        type: Sequelize.STRING
+      },
+      link: {
+        type: Sequelize.STRING,
+        allowNull: true
       },
       PlatformId: {
         type: Sequelize.UUID,

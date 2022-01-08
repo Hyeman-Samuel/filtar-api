@@ -15,11 +15,11 @@ module.exports = (sequelize, DataTypes,User,Category,Package) => {
   };
   Order.init({
     orderNumber: DataTypes.STRING,
-    price: DataTypes.NUMBER,
+    price: DataTypes.DECIMAL(10,2),
     stage: DataTypes.STRING,
     images: DataTypes.JSON,
+    hashtags: DataTypes.JSON,
     songs: DataTypes.JSON,
-    arFilterLink: DataTypes.JSON,
     PackageId: {
       type: DataTypes.UUID,
       references: {

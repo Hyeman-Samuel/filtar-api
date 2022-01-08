@@ -27,6 +27,18 @@ db.PlatformPackage = require("../models/join/platform_package")(sequelize,Sequel
 
 
 
+
+
+db.Order.hasMany(db.OrderDetails)
+db.OrderDetails.belongsTo(db.Order)
+
+
+
+db.Users.hasMany(db.Order,{foreignKey:"CustomerId",as:"orders"})
+db.Order.belongsTo(db.Users,{foreignKey:"CustomerId",as:"Customer"})
+
+
+
 ///CategoryPackage
 
 db.Category.belongsToMany(db.Package,{through:db.CategoryPackage,uniqueKey:"CategoryId"})
@@ -39,6 +51,7 @@ db.Package.belongsToMany(db.Platform,{through:db.PlatformPackage,uniqueKey:"Pack
 db.Platform.belongsToMany(db.Package,{through:db.PlatformPackage,uniqueKey:"PlatformId"})
 ////
 
+db.PlatformPackage.belongsTo(db.Platform)
 
 db.Transaction = {
   create : async ()=>{

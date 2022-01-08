@@ -13,7 +13,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       price: {
-        type: Sequelize.INTEGER
+        type: Sequelize.DECIMAL(10,2)
       },
       stage: {
         type: Sequelize.STRING
@@ -22,13 +22,13 @@ module.exports = {
         type: Sequelize.JSON,
         allowNull: false
       },
+      hashtags: {
+        type: Sequelize.JSON,
+        allowNull: false
+      },
       songs: {
         type: Sequelize.JSON,
         allowNull: true
-      },
-      arFilterLink: {
-        type: Sequelize.JSON,
-        allowNull: false
       },
       PackageId: {
         type: Sequelize.UUID,

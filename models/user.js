@@ -19,7 +19,8 @@ module.exports = (sequelize, DataType) => {
     lastName: DataTypes.STRING,
     hash: DataTypes.STRING(10000),
     salt: DataTypes.STRING,
-    role: DataTypes.STRING
+    role: DataTypes.STRING,
+    workload: DataTypes.INTEGER
   }, {
     sequelize: sequelize,
     modelName: 'User',

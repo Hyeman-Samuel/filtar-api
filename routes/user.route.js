@@ -69,9 +69,9 @@ Router.post("/login",validateLogin(),async(req,res)=>{
         response(res,RESPONSETYPE.BAD_REQUEST,errors)
     }
     const isCorrect = await validatePassword(req.body.email.toLowerCase(),req.body.password)
-   if(isCorrect){
-  const user = await  getUserByPredicate({email:req.body.email})
-    response(res,RESPONSETYPE.OK,await authJwt(user._id));
+   if(isCorrect){  
+  const user = await  getUserByPredicate({"email":req.body.email})
+    response(res,RESPONSETYPE.OK,await authJwt(user));
    }else{
     response(res,RESPONSETYPE.UNAUTHORIZED,"Incorrect login details");  
    }
@@ -112,7 +112,7 @@ Router.post("/signup",validateSignUp(),async(req,res)=>{
     }
    const newUser = await createUser(user);
 
-    response(res,RESPONSETYPE.OK,await authJwt(newUser._id));
+    response(res,RESPONSETYPE.OK,await authJwt(newUser));
 })
 
 

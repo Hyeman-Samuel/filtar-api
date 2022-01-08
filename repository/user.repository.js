@@ -1,5 +1,5 @@
 //const {User} = require("../model/user")
-const User = require("../persistence/mysql").users
+const User = require("../persistence/mysql").Users
 const ROLES = require("../models/role");
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
@@ -19,10 +19,11 @@ return jwt.sign({
 
 module.exports={
 getUserById:async function (userId){
-    const userModel = await User.findOne({"id":userId})
+    const userModel = await User.findOne({where:{"id":userId}})
     if(!userModel){
     return null
     }else{
+
         const user = await userModel.toJSON()
         return user;
     }
@@ -30,7 +31,8 @@ getUserById:async function (userId){
 
 },
 getUserByPredicate:async function (obj){
-    return await (await User.findOne(obj)).toJSON();
+   const user = await (await User.findOne({where:obj})).toJSON();
+   return user
 },
 getUsersByPredicate:async function (obj){
     return await User.findAll(obj);
@@ -48,14 +50,15 @@ createUser:async function (user){
 },
 
 validatePassword:async function (email,password){
-    const user = await (await User.findOne({"email":email})).toJSON()
+    const user = await (await User.findOne({where:{"email":email}})).toJSON()
     if(!user) return false;
 
     const hash = crypto.pbkdf2Sync(password,user.salt, 10000, 512, 'sha512').toString('hex');
     return user.hash === hash;
 }
-,authJwt:async function (userId){
-    const user = await (await User.findOne({"id":userId})).toJSON();
+,authJwt:async function (user){
+    console.log(user)
+    //const user = await (await User.findOne({"id":userId})).toJSON();
    return{
     _id: user.id,
     email: user.email,

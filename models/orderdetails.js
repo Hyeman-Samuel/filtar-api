@@ -14,8 +14,10 @@ module.exports = (sequelize, DataTypes,Order,Platform) => {
     }
   };
   OrderDetails.init({
-    price: DataTypes.STRING,
+    price: DataTypes.DECIMAL(10,2),
     status: DataTypes.STRING,
+    link:DataTypes.STRING,
+    platformName:DataTypes.STRING,
     OrderId: {
       type: DataTypes.UUID,
       references: {

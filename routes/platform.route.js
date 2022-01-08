@@ -81,7 +81,7 @@ Router.get("/",async(req,res)=>{
  */
 Router.post("/", 
 auth_middleware(),
-role(ROLES.USER),
+role(ROLES.ADMIN),
 async(req,res)=>{ 
     var errors = validationResult(req).array()
     if(errors.length != 0){
