@@ -1,45 +1,48 @@
 const request =require("request");
-const config= require("config");
-const flutterwave = (req) => {
-    const MySecretKey = ""//
+const flutterwave = () => {
+    const SecretKey = process.env.FLUTTERWAVE_SECRET_KEY;
     const initializePayment = (order,user, mycallback) => {
+        const redirectUrl = `/payment/webhook`;
         const form ={
-            "tx_ref":"hooli-tx-1920bbtytty",
+            "tx_ref":order.id,
             "amount":order.price,
             "currency":"NGN",
             "redirect_url":"",
             "payment_options":"card",
             "meta":{
-                "consumer_id":user._id,
+                "consumer_id":user.id,
                 "order_number":order.orderNumber
             },
             "customer":{
-                "email":user.email
-            },
-            "customizations":{
-                "title":"Filtar",
-                "description":"Virtual Reality",
-                "logo":"https://assets.piedpiper.com/logo.png"
+                "email":user.email,
+                "name" :`${user.lastName} ${user.firstName}`
             }
+            // ,
+            // "customizations":{
+            //     "title":"Filtar",
+            //     "description":"Augumented Reality"
+            //     // ,"logo":"https://assets.piedpiper.com/logo.png"
+            // }
         }
 
         const option = {
             url : 'https://api.flutterwave.com/v3/payments',
             headers : {
-                Authorization:"Bearer "+MySecretKey,
-                'content-type': 'application/json',
+                Authorization:`Bearer ${SecretKey}`,
+                "Content-Type": 'application/json',
                 'cache-control': 'no-cache'
         },
         form
         }
         const callback = (error, response, body)=>{
+            console.log(JSON.parse(response.body))
             return mycallback(error, body);
         }
-        request.post(option,callback);
+        return request.post(option,callback);
     }
 
-    const paymentWebhook = (ref,mycallback) => {
+    const webhook = (ref,mycallback) => {
     }
-    return {initializePayment, paymentWebhook};
+    return {initializePayment, webhook};
 }
-module.exports = flutterwave()
+module.exports = {flutterwave:flutterwave()}

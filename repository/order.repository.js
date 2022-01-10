@@ -1,24 +1,25 @@
 const {Order,OrderDetails,PlatformPackage,Users,sequelize,Platform} = require("../persistence/mysql");
 const {uuid} = require("uuidv4")
+const ORDERSTAGES = require("../constants/order")
 const ORDERSTATUS = require("../constants/orderDetails")
 const ROLES = require("../models/role")
 
 module.exports ={
     getOrderById:async function (orderId){
-        return await Order.findById({where:{"id":orderId}});
+        return await Order.findById({where:{"id":orderId},include:OrderDetails});
         },
     getOrderByPredicate:async function (obj){
-        return await Order.findOne({where:obj});
+        return await Order.findOne({where:obj,include:OrderDetails});
     },
     getOrdersByPredicate:async function (obj){
-        return await Order.find({where:obj});
+        return await Order.find({where:obj,include:OrderDetails});
     },
     previewOrder:async function(order,platforms){
 
-     let packagePlatforms = await PlatformPackage.findAll({where:{PlatformId:platforms,PackageId:order.PackageId},include:Platform})
+    let packagePlatforms = await PlatformPackage.findAll({where:{PlatformId:platforms,PackageId:order.PackageId},include:Platform})
         let totalPrice = 0;
         packagePlatforms.map((packagePlatform) => {
-          totalPrice += parseFloat(packagePlatform.price);
+        totalPrice += parseFloat(packagePlatform.price);
         });
         if(packagePlatforms.length>1){
             totalPrice -= (0.1*totalPrice)
@@ -39,7 +40,7 @@ module.exports ={
         let packagePlatforms = await PlatformPackage.findAll({where:{PlatformId:platforms,PackageId:order.PackageId},include:Platform})
         let totalPrice = 0;
         packagePlatforms.map((packagePlatform) => {
-          totalPrice += parseFloat(packagePlatform.price);
+        totalPrice += parseFloat(packagePlatform.price);
         });
         if(packagePlatforms.length>1){
             totalPrice -= (0.1*totalPrice)
@@ -62,14 +63,53 @@ module.exports ={
 
         return {order:_order,details:_details};
     },
-   async verifyOrderPayment(orderId){
-
+    verifyOrderPayment:async function(orderId){
+        const order = await Order.findOne({where:{"id":orderId}});
         const arDevs = await Users.findAll({where:{role:ROLES.ARDEV}})
-        ///get one with the least workload
+        arDevs.sort((a,b)=>{
+        return a.workload - b.workload;
+        })
+        order.stage = ORDERSTAGES.PENDING_UPLOAD
+        order.ArDevId = arDevs[0].id;
+        await order.save()
+        arDevs[0].workload += 1
+        await arDevs[0].save()
+        return true;
     },
-    uploadOrder:async function(orderId,arrayOfLinks){
-        // const _order =await Order.findById(orderId);
-        // await _order.save();
-        // return _order;
+    uploadOrderToPlatform:async function(orderId,platformId,link){
+        const _orderDetails = await OrderDetails.findOne({where:{"OrderId":orderId,"PlatformId":platformId}});
+        if(!_orderDetails) throw new Error("Order not found");
+
+        _orderDetails.link = link
+        _orderDetails.status = ORDERSTATUS.UPLOADED
+        await _orderDetails.save();
+        return _orderDetails;
+    },
+    submitForDelievery: async function (orderId){
+        const order = await Order.findOne({where:{"id":orderId},include:OrderDetails});
+        let isReadyToBeSubmitted = true;
+        order.OrderDetails.forEach(details => {
+            if(details.status != ORDERSTATUS.UPLOADED){
+                isReadyToBeSubmitted = false
+            }
+        });
+        if(isReadyToBeSubmitted){
+            order.stage = ORDERSTAGES.UPLOADED;
+            await order.save()
+        }
+    },
+    sendBackToArDev:async function(orderId,message){
+        const order = await Order.findOne({where:{"id":orderId}})
+        order.stage = ORDERSTAGES.PENDING_UPLOAD;
+        ///set Order DelieveryMessage 
+
+        await order.save()
+    },
+    setOrderAsDelievered:async function(orderId){
+        const order = await Order.findOne({where:{"id":orderId}})   
+        order.stage = ORDERSTAGES.DELIVERED;
+
+        await order.save()
+        return order
     }
 }

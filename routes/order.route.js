@@ -3,14 +3,15 @@ const { check } = require('express-validator');
 const Router = express.Router();
 const auth_middleware = require("../middleware/auth_middleware");
 const {response,RESPONSETYPE} = require("../utility/response")
-const {createOrder} = require("../repository/order.repository")
+const {createOrder,getOrderByPredicate, verifyOrderPayment,getOrdersByPredicate,uploadOrderToPlatform,submitForDelievery,sendBackToArDev,setOrderAsDelievered} = require("../repository/order.repository")
 const {getPackageById} = require("../repository/package.repository")
-const {SendTextEmail}= require("../utility/mailer")
+const {SendTextEmail}= require("../utility/mailer");
+const {flutterwave}=require("../utility/payment")
 const role=require("../middleware/role_middleware");
 const ROLES = require('../models/role');
 const ORDERSTAGES = require('../constants/order');
 const {uuid}=require("uuidv4");
-   /**
+/**
  * @openapi
  *components:
  *    schemas:
@@ -31,11 +32,32 @@ const {uuid}=require("uuidv4");
 
 
 Router.get("/",auth_middleware(),async(req,res)=>{ 
+    let orders;
+    switch (ROLES) {
+        case ROLES.USER:
+            orders = await getOrdersByPredicate({"CustomerId":req.User.id})
+            break;
+        case ROLES.ARDEV:
+            orders = await getOrdersByPredicate({"ArDevId":req.User.id,"stage":ORDERSTAGES.PENDING_UPLOAD})
+            break;
+        case ROLES.DELIVERY:
+            orders = await getOrdersByPredicate({"stage":ORDERSTAGES.UPLOADED})
+            break;
+        case ROLES.ADMIN:
+            orders = await getOrdersByPredicate()
+            break;
+    
+        default:
+            orders = null
+            break;
+    }
+    if(!orders) response(res,RESPONSETYPE.NOTFOUND,"No Orders yet");
 
-    response(res,RESPONSETYPE.OK,"reached");
+
+    response(res,RESPONSETYPE.OK,orders);
 })
 
-Router.get("/:orderNumber",async(req,res)=>{ 
+Router.get("/:orderNumber",auth_middleware(),async(req,res)=>{ 
     const order = await getOrderByPredicate({"orderNumber":req.params.orderNumber});
     if(!order) response(res,RESPONSETYPE.NOTFOUND,"Order not found.");
 
@@ -84,7 +106,7 @@ validateOrder(),async(req,res)=>{
         CustomerId:req.User.id,
         stage:ORDERSTAGES.PENDING_PAYMENT
     }
-   const newOrder = await createOrder(orderBody,req.body.platforms);
+    const newOrder = await createOrder(orderBody,req.body.platforms);
     //SendTextEmail(req.User.email,`You have just order for an AR filter`,`Order ${newOrder.orderNumber} Confirmation`)
     response(res,RESPONSETYPE.OK,newOrder,"order is ready to be fulfilled");
 })
@@ -95,10 +117,13 @@ validateOrder(),async(req,res)=>{
 
 
 
-Router.post("/payment/:orderId",
+Router.post("/:orderNumber/payment",
 auth_middleware(),
 role(ROLES.USER,ROLES.ADMIN),async(req,res)=>{ 
+    const order = await getOrderByPredicate({orderNumber:req.params.orderNumber})
+
     ///fluterwave
+    flutterwave.initializePayment(order,req.User,()=>{})
     response(res,RESPONSETYPE.OK,"reached");
 })
 
@@ -110,6 +135,8 @@ role(ROLES.USER,ROLES.ADMIN),async(req,res)=>{
 
 
 Router.get("/payment/webhook",async(req,res)=>{ 
+
+    verifyOrderPayment("f2b8ee08-fa1f-42d7-a3d5-e5a32c8c853c")
     response(res,RESPONSETYPE.OK,"reached");
 })
 
@@ -119,10 +146,12 @@ Router.get("/payment/webhook",async(req,res)=>{
 
 
 
-Router.post("upload/:orderId/platform/:platformId",
+Router.post("/:orderId/upload/platform/:platformId",
 auth_middleware(),
-role(ROLES.ARDEV),async(req,res)=>{ 
-    response(res,RESPONSETYPE.OK,"reached");
+role(ROLES.ARDEV,ROLES.ADMIN),
+validateUpload(),async(req,res)=>{ 
+    const {orderId,platformId} = req.params
+    response(res,RESPONSETYPE.OK,await uploadOrderToPlatform(orderId,platformId,req.body.link));
 })
 
 
@@ -131,22 +160,29 @@ role(ROLES.ARDEV),async(req,res)=>{
 
 
 
-Router.post("submit",
+Router.post("/:orderId/submit",
 auth_middleware(),
-role(ROLES.ARDEV),async(req,res)=>{ 
-    response(res,RESPONSETYPE.OK,"reached");
+role(ROLES.ARDEV,ROLES.ADMIN),async(req,res)=>{ 
+    response(res,RESPONSETYPE.OK,await submitForDelievery(req.params.orderId));
+})
+
+
+Router.post("/:orderId/sendback",
+auth_middleware(),
+role(ROLES.DELIVERY,ROLES.ADMIN),async(req,res)=>{ 
+    let message = req.body.message ?req.body.message:"";
+    response(res,RESPONSETYPE.OK,await sendBackToArDev(req.params.orderId,message));
 })
 
 
 
 
-
-
-
-Router.post("/deliever",
+Router.post("/:orderId/deliever",
 auth_middleware(),
-role(ROLES.DELIVERY),async(req,res)=>{ 
-    response(res,RESPONSETYPE.OK,"reached");
+role(ROLES.DELIVERY,ROLES.ADMIN),async(req,res)=>{ 
+    const order = await setOrderAsDelievered(req.params.orderId);
+    //await SendTextEmail()
+    response(res,RESPONSETYPE.OK,`Delievered order number ${order.orderNumber}`);
 })
 
 
@@ -162,13 +198,18 @@ function validateOrder(){
         check('package', 'package is required'),
         check('category', 'category is required'),
         check('platforms', 'platforms are required').isArray({min:1}),
-       check('images','Images are required').isArray({min:1}),
-       check('hashtags','hashtags are required').isArray({min:1})
-   ]
-   }
+        check('images','Images are required').isArray({min:1}),
+        check('hashtags','hashtags are required').isArray({min:1})
+    ]
+    }
+function validateUpload(){
+    return [  
+        check('link', 'link is required')
+    ]
+    }
 
 
-   function randomStr(len) {
+function randomStr(len) {
     var characters = 'ABCDEFJHIJKLMNOPQRSTUVWXYZ0123456789';
     var result = ""
     var charactersLength = characters.length;

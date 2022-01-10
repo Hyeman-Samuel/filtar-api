@@ -14,7 +14,7 @@ module.exports ={
     },
     createPlatform:async function(platform){
         const _platform = await Platform.create({id:uuid(),
-            platformName:PLATFORM.SNAPCHAT})
+            platformName:PLATFORM.INSTAGRAM})
         await _platform.toJSON();
         return _platform;
     },
