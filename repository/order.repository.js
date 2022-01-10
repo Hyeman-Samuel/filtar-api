@@ -63,7 +63,7 @@ module.exports ={
 
         return {order:_order,details:_details};
     },
-    verifyOrderPayment:async function(orderId){
+    assignArDeveloper:async function(orderId){
         const order = await Order.findOne({where:{"id":orderId}});
         const arDevs = await Users.findAll({where:{role:ROLES.ARDEV}})
         arDevs.sort((a,b)=>{
@@ -74,7 +74,6 @@ module.exports ={
         await order.save()
         arDevs[0].workload += 1
         await arDevs[0].save()
-        return true;
     },
     uploadOrderToPlatform:async function(orderId,platformId,link){
         const _orderDetails = await OrderDetails.findOne({where:{"OrderId":orderId,"PlatformId":platformId}});

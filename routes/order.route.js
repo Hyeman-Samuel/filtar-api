@@ -3,7 +3,7 @@ const { check } = require('express-validator');
 const Router = express.Router();
 const auth_middleware = require("../middleware/auth_middleware");
 const {response,RESPONSETYPE} = require("../utility/response")
-const {createOrder,getOrderByPredicate, verifyOrderPayment,getOrdersByPredicate,uploadOrderToPlatform,submitForDelievery,sendBackToArDev,setOrderAsDelievered} = require("../repository/order.repository")
+const {createOrder,getOrderByPredicate, assignArDeveloper,getOrdersByPredicate,uploadOrderToPlatform,submitForDelievery,sendBackToArDev,setOrderAsDelievered} = require("../repository/order.repository")
 const {getPackageById} = require("../repository/package.repository")
 const {SendTextEmail}= require("../utility/mailer");
 const {flutterwave}=require("../utility/payment")
@@ -136,7 +136,7 @@ role(ROLES.USER,ROLES.ADMIN),async(req,res)=>{
 
 Router.get("/payment/webhook",async(req,res)=>{ 
 
-    verifyOrderPayment("f2b8ee08-fa1f-42d7-a3d5-e5a32c8c853c")
+    assignArDeveloper("f2b8ee08-fa1f-42d7-a3d5-e5a32c8c853c")
     response(res,RESPONSETYPE.OK,"reached");
 })
 
