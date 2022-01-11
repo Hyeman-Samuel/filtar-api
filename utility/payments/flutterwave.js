@@ -1,13 +1,12 @@
 const request =require("request");
 const flutterwave = () => {
     const SecretKey = process.env.FLUTTERWAVE_SECRET_KEY;
-    const initializePayment = (order,user, mycallback) => {
-        const redirectUrl = `/payment/webhook`;
+    const initializePayment = async (order,user,redirectUrl) => {
         const form ={
             "tx_ref":order.id,
             "amount":order.price,
             "currency":"NGN",
-            "redirect_url":"",
+            "redirect_url":redirectUrl,
             "payment_options":"card",
             "meta":{
                 "consumer_id":user.id,
@@ -17,12 +16,12 @@ const flutterwave = () => {
                 "email":user.email,
                 "name" :`${user.lastName} ${user.firstName}`
             }
-            // ,
-            // "customizations":{
-            //     "title":"Filtar",
-            //     "description":"Augumented Reality"
-            //     // ,"logo":"https://assets.piedpiper.com/logo.png"
-            // }
+            ,
+            "customizations":{
+                "title":"Filtar",
+                "description":"Augumented Reality"
+                ,"logo":"https://assets.piedpiper.com/logo.png"
+            }
         }
 
         const option = {
@@ -32,16 +31,30 @@ const flutterwave = () => {
                 "Content-Type": 'application/json',
                 'cache-control': 'no-cache'
         },
-        form
+            body:JSON.stringify(form)
         }
-        const callback = (error, response, body)=>{
-            console.log(JSON.parse(response.body))
-            return mycallback(error, body);
-        }
-        return request.post(option,callback);
+        
+        var promise = new Promise(function(resolve, reject) {
+            const callback = (error, response, body)=>{
+                let responseBody = JSON.parse(response.body)
+                if (responseBody.status = "success") {
+                    resolve(responseBody);
+                    }
+                    else {
+
+                    reject(Error("Payment Failed"));
+                    }
+            }
+
+            request.post(option,callback);
+        
+        });
+
+        return promise;
     }
 
     const webhook = (ref,mycallback) => {
+
     }
     return {initializePayment, webhook};
 }

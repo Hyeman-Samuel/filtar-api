@@ -6,11 +6,12 @@ const {response,RESPONSETYPE} = require("../utility/response")
 const {createOrder,getOrderByPredicate, assignArDeveloper,getOrdersByPredicate,uploadOrderToPlatform,submitForDelievery,sendBackToArDev,setOrderAsDelievered} = require("../repository/order.repository")
 const {getPackageById} = require("../repository/package.repository")
 const {SendTextEmail}= require("../utility/mailer");
-const {flutterwave}=require("../utility/payment")
+const {flutterwave}=require("../utility/payments/flutterwave")
 const role=require("../middleware/role_middleware");
 const ROLES = require('../models/role');
 const ORDERSTAGES = require('../constants/order');
 const {uuid}=require("uuidv4");
+const redirectUrlPath ="/flutterwave/redirect";
 /**
  * @openapi
  *components:
@@ -121,10 +122,13 @@ Router.post("/:orderNumber/payment",
 auth_middleware(),
 role(ROLES.USER,ROLES.ADMIN),async(req,res)=>{ 
     const order = await getOrderByPredicate({orderNumber:req.params.orderNumber})
-
-    ///fluterwave
-    flutterwave.initializePayment(order,req.User,()=>{})
-    response(res,RESPONSETYPE.OK,"reached");
+    if(order.stage == ORDERSTAGES.PENDING_CONFIRMATION) response(res,RESPONSETYPE.NOTFOUND,"Order must be confirmed "); 
+    if(order.stage == ORDERSTAGES.CANCELLED) response(res,RESPONSETYPE.NOTFOUND,"Order is cancelled already"); 
+    if(order.stage != ORDERSTAGES.PENDING_PAYMENT) response(res,RESPONSETYPE.CONFLICT,"Transaction has already been made"); 
+    // let redirectUrl = req.hostname+redirectUrlPath;
+    // console.log(redirectUrl)
+    let result = await flutterwave.initializePayment(order,req.User,redirectUrl)
+    response(res,RESPONSETYPE.OK,{"redirectUrl":result.data.link});
 })
 
 
@@ -134,7 +138,7 @@ role(ROLES.USER,ROLES.ADMIN),async(req,res)=>{
 
 
 
-Router.get("/payment/webhook",async(req,res)=>{ 
+Router.get(redirectUrlPath,async(req,res)=>{ 
 
     assignArDeveloper("f2b8ee08-fa1f-42d7-a3d5-e5a32c8c853c")
     response(res,RESPONSETYPE.OK,"reached");
