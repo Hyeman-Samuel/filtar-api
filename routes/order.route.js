@@ -92,7 +92,7 @@ validateOrder(),async(req,res)=>{
     if(!package) response(res,RESPONSETYPE.NOTFOUND,"package not found");
     if(req.body.images.length > package.numberOfImages) response(res,RESPONSETYPE.BAD_REQUEST,"Images exceeds package limit");
 
-    if(req.body.songs != null && req.body.images.songs > package.numberOfSongs) response(res,RESPONSETYPE.BAD_REQUEST,"Songs exceeds package limit");
+    if(req.body.songs != null && req.body.songs.length > package.numberOfSongs) response(res,RESPONSETYPE.BAD_REQUEST,"Songs exceeds package limit");
 
     if(req.body.hashtags.length > package.numberOfHashtags) response(res,RESPONSETYPE.BAD_REQUEST,"Hashtags exceeds package limit");
 
@@ -118,10 +118,11 @@ validateOrder(),async(req,res)=>{
 
 
 
-Router.post("/:orderNumber/payment",
+Router.post("/:orderNumber/payment/flutterwave",
 auth_middleware(),
 role(ROLES.USER,ROLES.ADMIN),async(req,res)=>{ 
     const order = await getOrderByPredicate({orderNumber:req.params.orderNumber})
+    if(!order || order.CustomerId != req.User.id) response(res,RESPONSETYPE.FORBIDDEN,"Order does not exist"); 
     if(order.stage == ORDERSTAGES.PENDING_CONFIRMATION) response(res,RESPONSETYPE.NOTFOUND,"Order must be confirmed "); 
     if(order.stage == ORDERSTAGES.CANCELLED) response(res,RESPONSETYPE.NOTFOUND,"Order is cancelled already"); 
     if(order.stage != ORDERSTAGES.PENDING_PAYMENT) response(res,RESPONSETYPE.CONFLICT,"Transaction has already been made"); 
