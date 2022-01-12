@@ -53,9 +53,6 @@ const flutterwave = () => {
         return promise;
     }
 
-    const webhook = (ref,mycallback) => {
-
-    }
-    return {initializePayment, webhook};
+    return {initializePayment};
 }
 module.exports = {flutterwave:flutterwave()}
