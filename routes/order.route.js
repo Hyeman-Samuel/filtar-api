@@ -120,15 +120,18 @@ validateOrder(),async(req,res)=>{
 
 Router.post("/:orderNumber/payment/flutterwave",
 auth_middleware(),
-role(ROLES.USER,ROLES.ADMIN),async(req,res)=>{ 
+role(ROLES.USER,ROLES.ADMIN),
+validateReturnUrl(),
+async(req,res)=>{ 
     const order = await getOrderByPredicate({orderNumber:req.params.orderNumber})
     if(!order || order.CustomerId != req.User.id) response(res,RESPONSETYPE.FORBIDDEN,"Order does not exist"); 
     if(order.stage == ORDERSTAGES.PENDING_CONFIRMATION) response(res,RESPONSETYPE.NOTFOUND,"Order must be confirmed "); 
     if(order.stage == ORDERSTAGES.CANCELLED) response(res,RESPONSETYPE.NOTFOUND,"Order is cancelled already"); 
     if(order.stage != ORDERSTAGES.PENDING_PAYMENT) response(res,RESPONSETYPE.CONFLICT,"Transaction has already been made"); 
-    // let redirectUrl = req.hostname+redirectUrlPath;
-    // console.log(redirectUrl)
+    let redirectUrl = req.body.redirectUrl;
     let result = await flutterwave.initializePayment(order,req.User,redirectUrl)
+    if(!result.data.link )   response(res,RESPONSETYPE.INTERNAL_SERVER_ERROR,result.data);
+
     response(res,RESPONSETYPE.OK,{"redirectUrl":result.data.link});
 })
 
@@ -139,10 +142,16 @@ role(ROLES.USER,ROLES.ADMIN),async(req,res)=>{
 
 
 
-Router.get(redirectUrlPath,async(req,res)=>{ 
+Router.post(redirectUrlPath,async(req,res)=>{ 
+    let requestBody = req.body
 
-    assignArDeveloper("f2b8ee08-fa1f-42d7-a3d5-e5a32c8c853c")
-    response(res,RESPONSETYPE.OK,"reached");
+    if(requestBody.status == 'successful') {
+        assignArDeveloper(requestBody.txRef)
+        response(res,RESPONSETYPE.OK,"");
+        //Send payment confirmation mail
+    }else{
+        response(res,RESPONSETYPE.OK,"reached");
+    }
 })
 
 
@@ -212,6 +221,12 @@ function validateUpload(){
         check('link', 'link is required')
     ]
     }
+
+    function validateReturnUrl(){
+        return [  
+            check('redirectUrl', 'redirectUrl is required')
+        ]
+        }
 
 
 function randomStr(len) {
