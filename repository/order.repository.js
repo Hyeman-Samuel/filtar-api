@@ -93,6 +93,10 @@ module.exports ={
             }
         });
         if(isReadyToBeSubmitted){
+            //Put in a transaction later
+            const user = await Users.findOne({where:{"id":order.ArDevId}})
+            user.workload -= 1;
+            await user.save()
             order.stage = ORDERSTAGES.UPLOADED;
             await order.save()
         }
@@ -101,7 +105,10 @@ module.exports ={
         const order = await Order.findOne({where:{"id":orderId}})
         order.stage = ORDERSTAGES.PENDING_UPLOAD;
         ///set Order DelieveryMessage 
-
+        //Put in a transaction later
+        const user = await Users.findOne({where:{"id":order.ArDevId}})
+        user.workload += 1;
+        await user.save()
         await order.save()
     },
     setOrderAsDelievered:async function(orderId){
