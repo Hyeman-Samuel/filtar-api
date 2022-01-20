@@ -31,8 +31,10 @@ getUserById:async function (userId){
 
 },
 getUserByPredicate:async function (obj){
-   const user = await (await User.findOne({where:obj})).toJSON();
-   return user
+const userModel = await User.findOne({where:obj}) 
+if(!userModel) return null; 
+    const user =  userModel.toJSON()
+    return user;
 },
 getUsersByPredicate:async function (obj){
     return await User.findAll(obj);
@@ -46,7 +48,7 @@ createUser:async function (user){
     "salt":salt,
     "hash":hash,
     "role":ROLES.USER});
-   return await _user.toJSON()
+    return await _user.toJSON()
 },
 
 validatePassword:async function (email,password){

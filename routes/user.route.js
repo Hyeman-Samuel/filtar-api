@@ -3,7 +3,7 @@ const Router = express.Router();
 const {response,RESPONSETYPE} = require("../utility/response")
 const {check, validationResult } = require('express-validator');
 const {createUser,authJwt,validatePassword,getUserByPredicate}= require("../repository/user.repository");
-
+const google = require("../utility/external_authentication_providers/google")
 /**
  * @openapi
  *components:
@@ -69,13 +69,30 @@ Router.post("/login",validateLogin(),async(req,res)=>{
         response(res,RESPONSETYPE.BAD_REQUEST,errors)
     }
     const isCorrect = await validatePassword(req.body.email.toLowerCase(),req.body.password)
-   if(isCorrect){  
-  const user = await  getUserByPredicate({"email":req.body.email})
+    if(isCorrect){  
+    const user = await  getUserByPredicate({"email":req.body.email})
     response(res,RESPONSETYPE.OK,await authJwt(user));
-   }else{
+    }else{
     response(res,RESPONSETYPE.UNAUTHORIZED,"Incorrect login details");  
-   }
+    }
 })
+
+
+Router.post("/login/google",async(req,res)=>{ 
+    const authUrl = await google.getLoginRedirect()
+    response(res,RESPONSETYPE.OK,{"redirect":authUrl});
+})
+
+
+Router.get("/google/callback",async(req,res)=>{ 
+    const _email = await google.getEmailFromGoogle(req.query.code)
+    const user = await  getUserByPredicate({"email":_email})
+    if(!user) response(res,RESPONSETYPE.NOTFOUND,"This email does not have an account"); 
+
+
+    response(res,RESPONSETYPE.OK,await authJwt(user))
+})
+
 
 
 
@@ -110,7 +127,7 @@ Router.post("/signup",validateSignUp(),async(req,res)=>{
         firstName:req.body.firstName,
         lastName:req.body.lastName
     }
-   const newUser = await createUser(user);
+    const newUser = await createUser(user);
 
     response(res,RESPONSETYPE.OK,await authJwt(newUser));
 })
@@ -134,17 +151,17 @@ module.exports = Router
 
 function validateSignUp(){
     return [  check('email', 'Email is required'),
-       check('password', 'Password is requried'),
-       check('firstName', 'firstName is requried'),
-       check('lastName', 'lastName is requried'),
-       check('confirmPassword', 'Password Confirmation is requried')
-       .isLength({ min: 1 })
-   ]
-   }
+        check('password', 'Password is requried'),
+        check('firstName', 'firstName is requried'),
+        check('lastName', 'lastName is requried'),
+        check('confirmPassword', 'Password Confirmation is requried')
+        .isLength({ min: 1 })
+    ]
+    }
 
 function validateLogin(){
     return [  check('email', 'Email is required'),
-       check('password', 'Password is requried')
-       .isLength({ min: 1 })
-   ]
-   }
+        check('password', 'Password is requried')
+        .isLength({ min: 1 })
+    ]
+    }
