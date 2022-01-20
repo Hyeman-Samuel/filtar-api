@@ -18,6 +18,14 @@ module.exports = {
       stage: {
         type: Sequelize.STRING
       },
+      deliveryMessage: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      externalTransactionId: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       images: {
         type: Sequelize.JSON,
         allowNull: false

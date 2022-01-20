@@ -98,13 +98,14 @@ module.exports ={
             user.workload -= 1;
             await user.save()
             order.stage = ORDERSTAGES.UPLOADED;
+            order.deliveryMessage = "";
             await order.save()
         }
     },
     sendBackToArDev:async function(orderId,message){
         const order = await Order.findOne({where:{"id":orderId}})
         order.stage = ORDERSTAGES.PENDING_UPLOAD;
-        ///set Order DelieveryMessage 
+        order.deliveryMessage = message;
         //Put in a transaction later
         const user = await Users.findOne({where:{"id":order.ArDevId}})
         user.workload += 1;
@@ -114,7 +115,7 @@ module.exports ={
     setOrderAsDelievered:async function(orderId){
         const order = await Order.findOne({where:{"id":orderId}})   
         order.stage = ORDERSTAGES.DELIVERED;
-
+        order.deliveryMessage = "";
         await order.save()
         return order
     }

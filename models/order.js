@@ -17,6 +17,8 @@ module.exports = (sequelize, DataTypes,User,Category,Package) => {
     orderNumber: DataTypes.STRING,
     price: DataTypes.DECIMAL(10,2),
     stage: DataTypes.STRING,
+    deliveryMessage: DataTypes.STRING,
+    externalTransactionId: DataTypes.STRING,
     images: DataTypes.JSON,
     hashtags: DataTypes.JSON,
     songs: DataTypes.JSON,
