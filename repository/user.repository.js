@@ -8,7 +8,7 @@ const { uuid } = require('uuidv4');
 function generateJWT(user){
 const today = new Date();
 const expirationDate = new Date(today);
-expirationDate.setDate(today.getDate() + 60);
+expirationDate.setDate(today.getDate() + 5);
 
 return jwt.sign({
     email:user.email,
@@ -61,10 +61,10 @@ validatePassword:async function (email,password){
 ,authJwt:async function (user){
     console.log(user)
     //const user = await (await User.findOne({"id":userId})).toJSON();
-   return{
+return{
     _id: user.id,
     email: user.email,
     token: generateJWT(user),
-  };
+};
 }
 }
